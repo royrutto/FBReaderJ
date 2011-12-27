@@ -44,16 +44,25 @@ public abstract class Formats {
 	}
 
 	private static ArrayList<String> listFromString(String s) {
-		if (s != "") {
+		if (!s.equals("")) {
 			return new ArrayList<String>(Arrays.asList(s.split(";")));
 		} else {
 			return new ArrayList<String>();
 		}
 	}
 
+	private static boolean isValid(String extension) {
+		if (extension.equals("")) return false;
+		if (extension.contains(";")) return false;
+		return true;
+	}
+
 	public static boolean addFormat(String extension) {
+		if (!isValid(extension)) {
+			return false;
+		}
 		ZLStringOption formats = new ZLStringOption("Formats", "ExternalFormats", "");
-		if (formats.getValue() == "") {
+		if (formats.getValue().equals("")) {
 			formats.setValue(extension);
 			return true;
 		} else {
@@ -79,9 +88,6 @@ public abstract class Formats {
 			return new ZLStringOption("Formats", extensionToOption(extension), "org.geometerplus.zlibrary.ui.android");
 		} else {
 			ZLStringOption opt = new ZLStringOption("Formats", extensionToOption(extension), "");
-			if (opt.getValue() == "DELETE") {
-				opt.setValue("");
-			}
 			return new ZLStringOption("Formats", extensionToOption(extension), "");
 		}
 	}

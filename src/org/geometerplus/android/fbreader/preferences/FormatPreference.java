@@ -80,7 +80,7 @@ Log.d("fbreader", packageInfo.activityInfo.applicationInfo.packageName);
 	protected void onDialogClosed(boolean result) {
 		super.onDialogClosed(result);
 		if (result) {
-			if (getValue() == "DELETE") {
+			if (getValue().equals("DELETE")) {
 				myScreen.removePreference(this);
 				Formats.removeFormat(getTitle().toString());
 				myOption.setValue("");

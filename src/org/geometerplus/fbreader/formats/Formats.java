@@ -57,7 +57,7 @@ public abstract class Formats {
 			formats.setValue(extension);
 			return true;
 		} else {
-			if (getExternalFormats().contains(extension)) {
+			if (getExternalFormats().contains(extension) || getNativeFormats().contains(extension)) {
 				return false;
 			}
 			formats.setValue(formats.getValue() + ";" +extension);

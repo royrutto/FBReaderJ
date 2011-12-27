@@ -62,13 +62,13 @@ public abstract class Formats {
 			return false;
 		}
 		ZLStringOption formats = new ZLStringOption("Formats", "ExternalFormats", "");
+		if (getExternalFormats().contains(extension) || getNativeFormats().contains(extension)) {
+			return false;
+		}
 		if (formats.getValue().equals("")) {
 			formats.setValue(extension);
 			return true;
 		} else {
-			if (getExternalFormats().contains(extension) || getNativeFormats().contains(extension)) {
-				return false;
-			}
 			formats.setValue(formats.getValue() + ";" +extension);
 			return true;
 		}

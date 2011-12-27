@@ -34,6 +34,10 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface;
 
+import android.net.NetworkInfo;
+import android.net.ConnectivityManager;
+
+
 import javax.jmdns.*;
 
 import org.geometerplus.zlibrary.core.resources.ZLResource;
@@ -139,10 +143,14 @@ public class ScanLocalNetworkActivity extends ListActivity {
 						}
 						while(!myWifi.isWifiEnabled()) {
 						}
+						ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+						NetworkInfo nInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+						while (nInfo.isConnectedOrConnecting() && !nInfo.isConnected()) {
+						}
+						scan();
 					}
 				};
 				UIUtil.wait("enablingWifi", wifiRunnable, ScanLocalNetworkActivity.this);
-				scan();
 			}
 		});
 		alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, buttonResource.getResource("cancel").getValue(), new DialogInterface.OnClickListener() {

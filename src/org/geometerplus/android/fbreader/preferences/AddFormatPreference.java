@@ -44,7 +44,7 @@ class AddFormatPreference extends EditTextPreference implements ZLPreference {
 	}
 
 	boolean isValid(String extension) {
-		return (extension != "" && (!extension.contains(";")));
+		return (extension != "" || (!extension.contains(";")));
 	}
 
 	@Override

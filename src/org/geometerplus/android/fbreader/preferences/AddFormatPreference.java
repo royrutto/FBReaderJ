@@ -43,9 +43,15 @@ class AddFormatPreference extends EditTextPreference implements ZLPreference {
 		getEditText().setSingleLine();
 	}
 
+	boolean isValid(String extension) {
+		return (extension != "" && (!extension.contains(";")));
+	}
+
 	@Override
 	protected void onDialogClosed(boolean result) {
 		if (result) {
+			if (!isValid(getEditText().getText().toString())) return;
+			
 			if (Formats.addFormat(getEditText().getText().toString())) {
 				myScreen.addFormatOption(Formats.extensionOption(getEditText().getText().toString()), false);
 			}

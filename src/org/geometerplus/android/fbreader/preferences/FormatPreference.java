@@ -32,6 +32,7 @@ import java.util.*;
 
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
 import org.geometerplus.fbreader.formats.Formats;
+import org.geometerplus.fbreader.formats.BigMimeTypeMap;
 import org.geometerplus.android.fbreader.preferences.ZLPreferenceActivity.Screen;
 
 import android.util.Log;
@@ -49,17 +50,27 @@ class FormatPreference extends ListPreference implements ZLPreference {
 		myScreen = scr;
 
 		final PackageManager pm = context.getPackageManager();
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setData(Uri.parse("file:///sdcard/fgsfds." + formatName));
-Log.d("fbreader", "file:///sdcard/fgsfds." + formatName);
 		ArrayList<String> names = new ArrayList<String>();
 		ArrayList<String> values = new ArrayList<String>();
-		for (ResolveInfo packageInfo : pm.queryIntentActivities(intent, 0)) {
+		Intent extIntent = new Intent(Intent.ACTION_VIEW);
+		extIntent.setData(Uri.parse("file:///sdcard/fgsfds." + formatName));
+		for (ResolveInfo packageInfo : pm.queryIntentActivities(extIntent, PackageManager.MATCH_DEFAULT_ONLY)) {
 			if (!myPaths.contains(packageInfo.activityInfo.applicationInfo.packageName)) {
 				values.add(packageInfo.activityInfo.applicationInfo.packageName);
 				names.add(packageInfo.activityInfo.applicationInfo.loadLabel(pm).toString());
-Log.d("fbreader", packageInfo.activityInfo.applicationInfo.packageName);
 				myPaths.add(packageInfo.activityInfo.applicationInfo.packageName);
+			}
+		}
+		final String mimeType = BigMimeTypeMap.getType(formatName);
+		if (mimeType != null) {
+			Intent typIntent = new Intent(Intent.ACTION_VIEW);
+			typIntent.setType(mimeType);
+			for (ResolveInfo packageInfo : pm.queryIntentActivities(typIntent, PackageManager.MATCH_DEFAULT_ONLY)) {
+				if (!myPaths.contains(packageInfo.activityInfo.applicationInfo.packageName)) {
+					values.add(packageInfo.activityInfo.applicationInfo.packageName);
+					names.add(packageInfo.activityInfo.applicationInfo.loadLabel(pm).toString());
+					myPaths.add(packageInfo.activityInfo.applicationInfo.packageName);
+				}
 			}
 		}
 		if (!isNative) {

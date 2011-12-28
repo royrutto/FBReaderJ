@@ -54,6 +54,7 @@ public abstract class Formats {
 	private static boolean isValid(String extension) {
 		if (extension.equals("")) return false;
 		if (extension.contains(";")) return false;
+		if (extension.contains(".")) return false;
 		return true;
 	}
 

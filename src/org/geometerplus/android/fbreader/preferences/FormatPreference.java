@@ -52,25 +52,17 @@ class FormatPreference extends ListPreference implements ZLPreference {
 		final PackageManager pm = context.getPackageManager();
 		ArrayList<String> names = new ArrayList<String>();
 		ArrayList<String> values = new ArrayList<String>();
-		Intent extIntent = new Intent(Intent.ACTION_VIEW);
-		extIntent.setData(Uri.parse("file:///sdcard/fgsfds." + formatName));
-		for (ResolveInfo packageInfo : pm.queryIntentActivities(extIntent, PackageManager.MATCH_DEFAULT_ONLY)) {
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse("file:///sdcard/fgsfds." + formatName));
+		final String mimeType = BigMimeTypeMap.getType(formatName);
+		if (mimeType != null) {
+			intent.setDataAndType(Uri.parse("file:///sdcard/fgsfds." + formatName), mimeType);
+		}
+		for (ResolveInfo packageInfo : pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)) {
 			if (!myPaths.contains(packageInfo.activityInfo.applicationInfo.packageName)) {
 				values.add(packageInfo.activityInfo.applicationInfo.packageName);
 				names.add(packageInfo.activityInfo.applicationInfo.loadLabel(pm).toString());
 				myPaths.add(packageInfo.activityInfo.applicationInfo.packageName);
-			}
-		}
-		final String mimeType = BigMimeTypeMap.getType(formatName);
-		if (mimeType != null) {
-			Intent typIntent = new Intent(Intent.ACTION_VIEW);
-			typIntent.setType(mimeType);
-			for (ResolveInfo packageInfo : pm.queryIntentActivities(typIntent, PackageManager.MATCH_DEFAULT_ONLY)) {
-				if (!myPaths.contains(packageInfo.activityInfo.applicationInfo.packageName)) {
-					values.add(packageInfo.activityInfo.applicationInfo.packageName);
-					names.add(packageInfo.activityInfo.applicationInfo.loadLabel(pm).toString());
-					myPaths.add(packageInfo.activityInfo.applicationInfo.packageName);
-				}
 			}
 		}
 		if (!isNative) {

@@ -27,6 +27,8 @@ import org.geometerplus.fbreader.formats.pdb.PdbPlugin;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
 
+import android.content.Context;
+
 public class PluckerPlugin extends PdbPlugin {
 	@Override
 	public boolean acceptsFile(ZLFile file) {		
@@ -52,7 +54,7 @@ public class PluckerPlugin extends PdbPlugin {
 	}
 	
 	@Override
-	public boolean readModel(BookModel model)  {
+	public boolean readModel(BookModel model, Context context)  {
 		return new PluckerBookReader(model.Book.File, model, model.Book.getEncoding()).readDocument();
 	}
 

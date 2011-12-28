@@ -24,10 +24,12 @@ import org.geometerplus.fbreader.library.Book;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
 
+import android.content.Context;
+
 public abstract class FormatPlugin {
 	public abstract boolean acceptsFile(ZLFile file);
 	public abstract	boolean readMetaInfo(Book book);
-	public abstract boolean readModel(BookModel model);
+	public abstract boolean readModel(BookModel model, Context context);
 	public abstract ZLImage readCover(ZLFile file);
 	public abstract String readAnnotation(ZLFile file);
 

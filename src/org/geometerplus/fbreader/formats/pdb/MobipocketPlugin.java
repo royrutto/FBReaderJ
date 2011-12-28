@@ -31,6 +31,8 @@ import org.geometerplus.zlibrary.core.util.MimeType;
 import org.geometerplus.fbreader.library.Book;
 import org.geometerplus.fbreader.bookmodel.BookModel;
 
+import android.content.Context;
+
 public class MobipocketPlugin extends PdbPlugin {
 	@Override
 	public boolean acceptsFile(ZLFile file) {
@@ -125,7 +127,7 @@ public class MobipocketPlugin extends PdbPlugin {
 	}
 
 	@Override
-	public boolean readModel(BookModel model) {
+	public boolean readModel(BookModel model, Context context) {
 		try {
 			return new MobipocketHtmlBookReader(model).readBook();
 		} catch (IOException e) {

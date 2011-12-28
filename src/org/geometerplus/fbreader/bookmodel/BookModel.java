@@ -29,14 +29,16 @@ import org.geometerplus.fbreader.library.Book;
 import org.geometerplus.fbreader.formats.*;
 import org.geometerplus.fbreader.Paths;
 
+import android.content.Context;
+
 public final class BookModel {
-	public static BookModel createModel(Book book) {
+	public static BookModel createModel(Book book, Context context) {
 		FormatPlugin plugin = PluginCollection.Instance().getPlugin(book.File);
 		if (plugin == null) {
 			return null;
 		}
 		BookModel model = new BookModel(book);
-		if (plugin.readModel(model)) {
+		if (plugin.readModel(model, context)) {
 			return model;
 		}
 		return null;

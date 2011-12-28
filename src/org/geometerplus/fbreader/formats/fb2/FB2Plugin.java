@@ -25,6 +25,8 @@ import org.geometerplus.fbreader.formats.FormatPlugin;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
 
+import android.content.Context;
+
 public class FB2Plugin extends FormatPlugin {
 	@Override
 	public boolean acceptsFile(ZLFile file) {
@@ -37,7 +39,7 @@ public class FB2Plugin extends FormatPlugin {
 	}
 	
 	@Override
-	public boolean readModel(BookModel model) {
+	public boolean readModel(BookModel model, Context context) {
 		return new FB2Reader(model).readBook();
 	}
 

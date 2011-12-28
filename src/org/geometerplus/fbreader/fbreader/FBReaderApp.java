@@ -34,6 +34,8 @@ import org.geometerplus.zlibrary.text.view.ZLTextWordCursor;
 import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.library.*;
 
+import android.content.Context;
+
 public final class FBReaderApp extends ZLApplication {
 	public final ZLBooleanOption AllowScreenBrightnessAdjustmentOption =
 		new ZLBooleanOption("LookNFeel", "AllowScreenBrightnessAdjustment", true);
@@ -139,7 +141,7 @@ public final class FBReaderApp extends ZLApplication {
 		setView(BookTextView);
 	}
 
-	public void initWindow() {
+	public void initWindow(final Context context) {
 		super.initWindow();
 		wait("loadingBook", new Runnable() {
 			public void run() {
@@ -150,12 +152,12 @@ public final class FBReaderApp extends ZLApplication {
 				if ((book == null) || !book.File.exists()) {
 					book = Book.getByFile(Library.getHelpFile());
 				}
-				openBookInternal(book, null);
+				openBookInternal(book, null, context);
 			}
 		});
 	}
 
-	public void openBook(final Book book, final Bookmark bookmark) {
+	public void openBook(final Book book, final Bookmark bookmark, final Context context) {
 		if (book == null) {
 			return;
 		}
@@ -166,7 +168,7 @@ public final class FBReaderApp extends ZLApplication {
 		}
 		wait("loadingBook", new Runnable() {
 			public void run() {
-				openBookInternal(book, bookmark);
+				openBookInternal(book, bookmark, context);
 			}
 		});
 	}
@@ -219,7 +221,7 @@ public final class FBReaderApp extends ZLApplication {
 		FootnoteView.clearCaches();
 	}
 
-	void openBookInternal(Book book, Bookmark bookmark) {
+	void openBookInternal(Book book, Bookmark bookmark, final Context context) {
 		if (book != null) {
 			onViewChanged();
 
@@ -233,7 +235,7 @@ public final class FBReaderApp extends ZLApplication {
 			Model = null;
 			System.gc();
 			System.gc();
-			Model = BookModel.createModel(book);
+			Model = BookModel.createModel(book, context);
 			if (Model != null) {
 				ZLTextHyphenator.Instance().load(book.getLanguage());
 				BookTextView.setModel(Model.BookTextModel);
@@ -300,10 +302,10 @@ public final class FBReaderApp extends ZLApplication {
 	}
 
 	@Override
-	public void openFile(ZLFile file) {
+	public void openFile(ZLFile file, final Context context) {
 		final Book book = createBookForFile(file);
 		if (book != null) {
-			openBook(book, null);
+			openBook(book, null, context);
 		}
 	}
 
@@ -367,7 +369,7 @@ public final class FBReaderApp extends ZLApplication {
 		return myCancelActionsList;
 	}
 
-	public void runCancelAction(int index) {
+	public void runCancelAction(int index, final Context context) {
 		if (index < 0 || index >= myCancelActionsList.size()) {
 			return;
 		}
@@ -375,7 +377,7 @@ public final class FBReaderApp extends ZLApplication {
 		final CancelActionDescription description = myCancelActionsList.get(index);
 		switch (description.Type) {
 			case previousBook:
-				openBook(Library.getPreviousBook(), null);
+				openBook(Library.getPreviousBook(), null, context);
 				break;
 			case returnTo:
 			{

@@ -17,38 +17,52 @@
  * 02110-1301, USA.
  */
 
-package org.geometerplus.fbreader.formats.html;
-
-import java.io.IOException;
+package org.geometerplus.fbreader.formats;
 
 import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.library.Book;
 import org.geometerplus.fbreader.formats.FormatPlugin;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
+import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
+import android.content.Intent;
 import android.content.Context;
 
-public class HtmlPlugin extends FormatPlugin {
-	
+import android.net.Uri;
+
+import android.util.Log;
+
+public class CustomPlugin extends FormatPlugin {
+	private String myFormat;
+	private ZLStringOption myOption;
+
+	CustomPlugin(String extension) {
+		myFormat = extension;
+		myOption = Formats.extensionOption(myFormat);
+	}
+
 	@Override
 	public boolean acceptsFile(ZLFile file) {
-		return "htm".equals(file.getExtension()) 
-			|| "html".equals(file.getExtension());
+		return myFormat.equals(file.getExtension());
 	}
-
+	
 	@Override
 	public boolean readMetaInfo(Book book) {
-		return new HtmlMetaInfoReader(book).readMetaInfo();
+		return true;
 	}
-
+	
 	@Override
 	public boolean readModel(BookModel model, Context context) {
-		try {
-			return new HtmlReader(model).readBook();
-		} catch (IOException e) {
-			return false;
+		Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
+		LaunchIntent.setPackage(myOption.getValue());
+		LaunchIntent.setData(Uri.parse("file://" + model.Book.File.getPath()));
+		if (BigMimeTypeMap.getType(myFormat) != null) {
+			LaunchIntent.setDataAndType(Uri.parse("file://" + model.Book.File.getPath()), BigMimeTypeMap.getType(myFormat));
 		}
+
+		context.startActivity(LaunchIntent);
+		return true;
 	}
 
 	@Override

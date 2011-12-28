@@ -27,6 +27,8 @@ import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
 import org.geometerplus.fbreader.formats.FormatPlugin;
 
+import android.content.Context;
+
 public abstract class PdbPlugin extends FormatPlugin {
 	@Override
 	public boolean acceptsFile(ZLFile file) {

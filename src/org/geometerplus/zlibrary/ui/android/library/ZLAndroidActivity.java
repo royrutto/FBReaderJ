@@ -111,7 +111,7 @@ public abstract class ZLAndroidActivity extends Activity {
 			((ZLAndroidApplication)getApplication()).myMainWindow = new ZLAndroidApplicationWindow(application);
 			application.initWindow();
 		} else {
-			ZLApplication.Instance().openFile(fileToOpen);
+			ZLApplication.Instance().openFile(fileToOpen, this);
 		}
 		ZLApplication.Instance().getViewWidget().repaint();
 	}
@@ -214,7 +214,7 @@ public abstract class ZLAndroidActivity extends Activity {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		ZLApplication.Instance().openFile(fileFromIntent(intent));
+		ZLApplication.Instance().openFile(fileFromIntent(intent), this);
 	}
 
 	private static ZLAndroidLibrary getLibrary() {

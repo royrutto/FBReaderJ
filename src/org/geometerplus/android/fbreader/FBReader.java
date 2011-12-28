@@ -321,7 +321,7 @@ public final class FBReader extends ZLAndroidActivity {
 				break;
 			}
 			case CANCEL_CODE:
-				fbreader.runCancelAction(resultCode - 1);
+				fbreader.runCancelAction(resultCode - 1, this);
 				break;
 		}
 	}

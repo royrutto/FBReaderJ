@@ -25,6 +25,8 @@ import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.view.ZLView;
 import org.geometerplus.zlibrary.core.view.ZLViewWidget;
 
+import android.content.Context;
+
 public abstract class ZLApplication {
 	public static ZLApplication Instance() {
 		return ourInstance;
@@ -177,7 +179,7 @@ public abstract class ZLApplication {
 	public void onWindowClosing() {
 	}
 
-	public abstract void openFile(ZLFile file);
+	public abstract void openFile(ZLFile file, final Context context);
 
 	//Action
 	static abstract public class ZLAction {

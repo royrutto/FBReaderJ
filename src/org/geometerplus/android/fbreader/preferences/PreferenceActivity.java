@@ -459,10 +459,8 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 		}
 		formatScreen.addNewFormatOption();
 
-		/*
 		final Screen tipsScreen = createPreferenceScreen("tips");
 		tipsScreen.addOption(TipsManager.Instance().ShowTipsOption, "showTips");
-		*/
 	}
 
 }

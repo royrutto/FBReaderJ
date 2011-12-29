@@ -33,6 +33,10 @@ public abstract class FormatPlugin {
 	public abstract ZLImage readCover(ZLFile file);
 	public abstract String readAnnotation(ZLFile file);
 
+	public boolean isNative() {
+		return true;
+	}
+
 	/*
 	public static void detectEncodingAndLanguage(Book book, InputStream stream) throws IOException {	
 		String language = book.getLanguage();

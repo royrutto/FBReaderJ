@@ -43,6 +43,11 @@ public class CustomPlugin extends FormatPlugin {
 	}
 
 	@Override
+	public boolean isNative() {
+		return false;
+	}
+
+	@Override
 	public boolean acceptsFile(ZLFile file) {
 		return myFormat.equals(file.getExtension());
 	}

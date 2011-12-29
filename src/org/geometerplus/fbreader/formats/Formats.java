@@ -25,6 +25,10 @@ import java.util.Arrays;
 
 public abstract class Formats {
 
+	public static final int NATIVE = 0;
+	public static final int EXTERNAL = 1;
+	public static final int UNDEFINED = 2;
+
 	private static String NATIVE_FORMATS = "epub;oeb;fb2;mobi;prc";
 
 	public static String extensionToOption(String extension) {
@@ -53,6 +57,7 @@ public abstract class Formats {
 
 	private static boolean isValid(String extension) {
 		if (extension.equals("")) return false;
+		if (extension.equals("opf")) return false;
 		if (extension.contains(";")) return false;
 		if (extension.contains(".")) return false;
 		return true;
@@ -91,6 +96,13 @@ public abstract class Formats {
 			ZLStringOption opt = new ZLStringOption("Formats", extensionToOption(extension), "");
 			return new ZLStringOption("Formats", extensionToOption(extension), "");
 		}
+	}
+
+	public static int getStatus(String extension) {
+		String pkg = extensionOption(extension).getValue();
+		if (pkg.equals("org.geometerplus.zlibrary.ui.android")) return NATIVE;
+		if (pkg.equals("")) return UNDEFINED;
+		return EXTERNAL;
 	}
 
 

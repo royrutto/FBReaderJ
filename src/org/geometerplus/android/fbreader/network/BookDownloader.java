@@ -28,6 +28,8 @@ import android.content.Intent;
 
 import org.geometerplus.fbreader.network.urlInfo.BookUrlInfo;
 
+import org.geometerplus.fbreader.formats.PluginCollection;
+
 public class BookDownloader extends Activity {
 
 	public static boolean acceptsUri(Uri uri) {
@@ -44,10 +46,7 @@ public class BookDownloader extends Activity {
 		final String fileName = path.get(path.size() - 1).toLowerCase();
 		return
 			fileName.endsWith(".fb2.zip") ||
-			fileName.endsWith(".fb2") ||
-			fileName.endsWith(".epub") ||
-			fileName.endsWith(".mobi") ||
-			fileName.endsWith(".prc");
+			PluginCollection.Instance().acceptsBookPath(fileName);
 	}
 
 	public void onCreate(Bundle icicle) {

@@ -33,43 +33,61 @@ import org.geometerplus.fbreader.formats.pdb.MobipocketPlugin;
 public class PluginCollection {
 	private static PluginCollection ourInstance;
 
-	private final ArrayList<FormatPlugin> myPlugins = new ArrayList<FormatPlugin>();
 	public ZLStringOption DefaultLanguageOption;
 	public ZLStringOption DefaultEncodingOption;
 	public ZLBooleanOption LanguageAutoDetectOption;
-	
+
+	private final HashMap<String, FormatPlugin> myNativePlugins = new HashMap<String, FormatPlugin>();
+	private final HashMap<String, FormatPlugin> myExternalPlugins = new HashMap<String, FormatPlugin>();
+
 	public static PluginCollection Instance() {
 		if (ourInstance == null) {
-			ourInstance = new PluginCollection();
-			ourInstance.myPlugins.add(new FB2Plugin());
-			ourInstance.myPlugins.add(new MobipocketPlugin());
-			ourInstance.myPlugins.add(new OEBPlugin());
-			ourInstance.myPlugins.add(new EpubPlugin());
-			ourInstance.myPlugins.add(new CustomPlugin("pdf"));
 
-			ourInstance.myPlugins.add(new OPFPlugin());
+			ourInstance = new PluginCollection();
+			ourInstance.myNativePlugins.put("fb2", new FB2Plugin());
+			ourInstance.myNativePlugins.put("mobi", new MobipocketPlugin());
+			ourInstance.myNativePlugins.put("oeb", new OEBPlugin());
+			ourInstance.myNativePlugins.put("epub", new EpubPlugin());
+			ourInstance.myNativePlugins.put("opf", new OPFPlugin());
+
 		}
 		return ourInstance;
 	}
 	
-	public static void deleteInstance() {
-		if (ourInstance != null) {
-			ourInstance = null;
-		}
-	}
+//	public static void deleteInstance() {
+//		if (ourInstance != null) {
+//			ourInstance = null;
+//		}
+//	}
 
 	private PluginCollection() {
 		LanguageAutoDetectOption = new ZLBooleanOption("Format", "AutoDetect", true);
 		DefaultLanguageOption = new ZLStringOption("Format", "DefaultLanguage", "en"); 
 		DefaultEncodingOption = new ZLStringOption("Format", "DefaultEncoding", "windows-1252");
 	}
-		
-	public FormatPlugin getPlugin(ZLFile file) {
-		for (FormatPlugin plugin : myPlugins) {
-			if (plugin.acceptsFile(file)) {
-				return plugin;
-			}
+
+	private FormatPlugin getOrCreateCustomPlugin(String extension) {
+		if (!myExternalPlugins.containsKey(extension)) {
+			myExternalPlugins.put(extension, new CustomPlugin(extension));
 		}
-		return null;
+		return myExternalPlugins.get(extension);
 	}
+
+	public FormatPlugin getPlugin(ZLFile file) {
+		String extension = file.getExtension();
+		switch (Formats.getStatus(extension)) {
+			case Formats.NATIVE:
+				return myNativePlugins.get(extension);
+			case Formats.EXTERNAL:
+				return getOrCreateCustomPlugin(extension);
+			default:
+				return null;
+		}
+	}
+
+	public boolean acceptsBookPath(String path) {
+		String extension = path.substring(path.lastIndexOf('.') + 1);
+		return Formats.getStatus(extension) != Formats.UNDEFINED;
+	}
+
 }

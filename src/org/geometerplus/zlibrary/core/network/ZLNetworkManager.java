@@ -324,10 +324,6 @@ public class ZLNetworkManager {
 				try {
 					response = httpClient.execute(httpRequest, httpContext);
 					entity = response.getEntity();
-					for (Header h:response.getAllHeaders()) {
-						Log.d("fbreader", h.getName());
-						Log.d("fbreader", h.getValue());
-					}
 					lastException = null;
 					if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
 						final AuthState state = (AuthState)httpContext.getAttribute(ClientContext.TARGET_AUTH_STATE);
@@ -456,3 +452,4 @@ public class ZLNetworkManager {
 		});
 	}
 }
+

@@ -30,6 +30,8 @@ import org.geometerplus.fbreader.formats.oeb.OPFPlugin;
 import org.geometerplus.fbreader.formats.oeb.EpubPlugin;
 import org.geometerplus.fbreader.formats.pdb.MobipocketPlugin;
 
+import android.util.Log;
+
 public class PluginCollection {
 	private static PluginCollection ourInstance;
 
@@ -39,6 +41,8 @@ public class PluginCollection {
 
 	private final HashMap<String, FormatPlugin> myNativePlugins = new HashMap<String, FormatPlugin>();
 	private final HashMap<String, FormatPlugin> myExternalPlugins = new HashMap<String, FormatPlugin>();
+
+	private final String myHelp = "MiniHelp\\.\\w+\\.fb2";
 
 	public static PluginCollection Instance() {
 		if (ourInstance == null) {
@@ -74,6 +78,9 @@ public class PluginCollection {
 	}
 
 	public FormatPlugin getPlugin(ZLFile file) {
+		if (file.getShortName().matches(myHelp)) {
+			return myNativePlugins.get("fb2"); //read help always natively
+		}
 		String extension = file.getExtension();
 		switch (Formats.getStatus(extension)) {
 			case Formats.NATIVE:

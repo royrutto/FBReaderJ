@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011 Geometer Plus <contact@geometerplus.com>
+ * Copyright (C) 2009-2012 Geometer Plus <contact@geometerplus.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,18 +28,13 @@ import org.geometerplus.zlibrary.core.options.ZLIntegerRangeOption;
 
 import org.geometerplus.zlibrary.text.view.style.*;
 
-import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
+import org.geometerplus.zlibrary.ui.android.library.ZLAndroidLibrary;
 import org.geometerplus.zlibrary.ui.android.view.AndroidFontUtil;
 
 import org.geometerplus.fbreader.fbreader.*;
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.fbreader.bookmodel.FBTextKind;
 import org.geometerplus.fbreader.tips.TipsManager;
-
-import android.view.ContextMenu;
-import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
 
 import org.geometerplus.android.fbreader.DictionaryUtil;
 
@@ -55,7 +50,7 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 	@Override
 	protected void init(Intent intent) {
 		final FBReaderApp fbReader = (FBReaderApp)FBReaderApp.Instance();
-		final ZLAndroidApplication androidApp = ZLAndroidApplication.Instance();
+		final ZLAndroidLibrary androidLibrary = (ZLAndroidLibrary)ZLAndroidLibrary.Instance();
 		final ColorProfile profile = fbReader.getColorProfile();
 
 		final Screen directoriesScreen = createPreferenceScreen("directories");
@@ -67,10 +62,10 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 
 		final ZLPreferenceSet statusBarPreferences = new ZLPreferenceSet();
 		final Screen appearanceScreen = createPreferenceScreen("appearance");
-		appearanceScreen.addOption(androidApp.AutoOrientationOption, "autoOrientation");
+		appearanceScreen.addOption(androidLibrary.AutoOrientationOption, "autoOrientation");
 		appearanceScreen.addPreference(
 			new ZLBooleanPreference(
-				this, androidApp.ShowStatusBarOption, appearanceScreen.Resource, "showStatusBar"
+				this, androidLibrary.ShowStatusBarOption, appearanceScreen.Resource, "showStatusBar"
 			) {
 				@Override
 				public void onClick() {
@@ -81,12 +76,12 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 		);
 		statusBarPreferences.add(
 			appearanceScreen.addOption(
-				androidApp.ShowStatusBarWhenMenuIsActiveOption,
+				androidLibrary.ShowStatusBarWhenMenuIsActiveOption,
 				"showStatusBarWhenMenuIsActive"
 			)
 		);
-		statusBarPreferences.setEnabled(!androidApp.ShowStatusBarOption.getValue());
-		appearanceScreen.addOption(androidApp.DisableButtonLightsOption, "disableButtonLights");
+		statusBarPreferences.setEnabled(!androidLibrary.ShowStatusBarOption.getValue());
+		appearanceScreen.addOption(androidLibrary.DisableButtonLightsOption, "disableButtonLights");
 
 		final Screen textScreen = createPreferenceScreen("text");
 		final ZLTextStyleCollection collection = ZLTextStyleCollection.Instance();
@@ -320,20 +315,20 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 			public void onAccept() {
 				super.onAccept();
 				if (!isChecked()) {
-					androidApp.ScreenBrightnessLevelOption.setValue(0);
+					androidLibrary.ScreenBrightnessLevelOption.setValue(0);
 				}
 			}
 		});
 		displayScreen.addPreference(new BatteryLevelToTurnScreenOffPreference(
 			this,
-			androidApp.BatteryLevelToTurnScreenOffOption,
+			androidLibrary.BatteryLevelToTurnScreenOffOption,
 			displayScreen.Resource,
 			"dontTurnScreenOff"
 		));
 		/*
 		displayScreen.addPreference(new ZLBooleanPreference(
 			this,
-			androidApp.DontTurnScreenOffDuringChargingOption,
+			androidLibrary.DontTurnScreenOffDuringChargingOption,
 			displayScreen.Resource,
 			"dontTurnScreenOffDuringCharging"
 		));

@@ -72,6 +72,12 @@ abstract class ZLPreferenceActivity extends android.preference.PreferenceActivit
 			);
 		}
 
+		public Preference addOption(ZLStringListOption option, String resourceKey) {
+			return addPreference(
+				new MultiStringPreference(ZLPreferenceActivity.this, Resource, resourceKey)
+			);
+		}
+
 		public Preference addOption(ZLColorOption option, String resourceKey) {
 			return addPreference(
 				new ZLColorPreference(ZLPreferenceActivity.this, Resource, resourceKey, option)

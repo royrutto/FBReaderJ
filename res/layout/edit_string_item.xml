@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:minHeight="?android:attr/listPreferredItemHeight"
 	android:paddingLeft="5dip"
-	android:orientation="horizontal"
 	android:gravity="top|left"
 >
-	<EditText
-		android:id="@+id/edit_string_editor"
-		android:layout_width="wrap_content"
-		android:layout_height="fill_parent"
-		android:singleLine="true"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-	/>
 	<Button
 		android:id="@+id/edit_string_delete_button"
 		android:layout_width="wrap_content"
-		android:layout_height="fill_parent"
+		android:layout_height="wrap_content"
 		android:singleLine="true"
-		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_alignParentRight="true"
 		style="@style/MinusButton"
 	/>
-</LinearLayout>
+	<EditText
+		android:id="@+id/edit_string_editor"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+    android:paddingBottom="10dip"
+    android:layout_marginLeft="10dip"
+    android:layout_marginRight="10dip"
+		android:singleLine="true"
+		android:gravity="center_vertical"
+		android:layout_toLeftOf="@id/edit_string_delete_button"
+	/>
+</RelativeLayout>

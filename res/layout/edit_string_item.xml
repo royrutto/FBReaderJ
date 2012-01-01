@@ -10,7 +10,6 @@
 		android:id="@+id/edit_string_delete_button"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:singleLine="true"
 		android:layout_alignParentRight="true"
 		style="@style/MinusButton"
 	/>
@@ -18,9 +17,7 @@
 		android:id="@+id/edit_string_editor"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-    android:paddingBottom="10dip"
-    android:layout_marginLeft="10dip"
-    android:layout_marginRight="10dip"
+		android:editable="true"
 		android:singleLine="true"
 		android:gravity="center_vertical"
 		android:layout_toLeftOf="@id/edit_string_delete_button"

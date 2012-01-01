@@ -75,6 +75,15 @@ class MultiStringPreference extends DialogPreference {
 			final View view = convertView != null
 				? convertView
 				: LayoutInflater.from(parent.getContext()).inflate(R.layout.edit_string_item, parent, false);
+			final EditText editor = (EditText)view.findViewById(R.id.edit_string_editor);
+			editor.setText(getItem(position));
+			final Button deleteButton = (Button)view.findViewById(R.id.edit_string_delete_button);
+			deleteButton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View view) {
+				}
+			});
+			deleteButton.setVisibility(View.VISIBLE);
+			deleteButton.setEnabled(true);
 			return view;
 		}
 	}

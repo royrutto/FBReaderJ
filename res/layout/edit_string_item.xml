@@ -9,18 +9,17 @@
 >
 	<EditText
 		android:id="@+id/edit_string_editor"
-		android:layout_width="fill_parent"
+		android:layout_width="wrap_content"
 		android:layout_height="fill_parent"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 	/>
-<!--
 	<Button
 		android:id="@+id/edit_string_delete_button"
 		android:layout_width="wrap_content"
 		android:layout_height="fill_parent"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceMedium"
+		style="@style/MinusButton"
 	/>
--->
 </LinearLayout>

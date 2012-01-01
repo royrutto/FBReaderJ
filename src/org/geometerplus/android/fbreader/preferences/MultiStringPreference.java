@@ -22,7 +22,8 @@ package org.geometerplus.android.fbreader.preferences;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.preference.DialogPreference;
-import android.view.View;
+import android.view.*;
+import android.widget.*;
 
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 
@@ -37,7 +38,7 @@ class MultiStringPreference extends DialogPreference {
 		final String title = myResource.getValue();
 		setTitle(title);
 		setDialogTitle(title);
-		setDialogLayoutResource(R.layout.animation_speed_dialog);
+		setDialogLayoutResource(R.layout.multi_string_dialog);
 
 		final ZLResource buttonResource = ZLResource.resource("dialog").getResource("button");
 		setPositiveButtonText(buttonResource.getResource("ok").getValue());
@@ -46,12 +47,35 @@ class MultiStringPreference extends DialogPreference {
 
 	@Override
 	protected void onBindDialogView(View view) {
+		final ListView listView = (ListView)view.findViewById(R.id.multi_string_list);
+		listView.setAdapter(new MultiStringAdapter());
 		super.onBindDialogView(view);
 	}
 
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
 		if (which == DialogInterface.BUTTON_POSITIVE) {
+		}
+	}
+
+	private static class MultiStringAdapter extends BaseAdapter {
+		public int getCount() {
+			return 4;
+		}
+
+		public String getItem(int position) {
+			return "Item " + position;
+		}
+
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			final View view = convertView != null
+				? convertView
+				: LayoutInflater.from(parent.getContext()).inflate(R.layout.edit_string_item, parent, false);
+			return view;
 		}
 	}
 }

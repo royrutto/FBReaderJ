@@ -19,6 +19,8 @@
 
 package org.geometerplus.fbreader.library;
 
+import java.util.List;
+
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 
@@ -27,9 +29,29 @@ import org.geometerplus.fbreader.Paths;
 public class FileFirstLevelTree extends FirstLevelTree {
 	FileFirstLevelTree(RootTree root, String id) {
 		super(root, id);
-		addChild(Paths.BooksDirectoryOption().getValue(), "fileTreeLibrary");
+		final List<String> dirs = Paths.BooksDirectoriesOption().getValue();
+		if (dirs.size() == 1) {
+			addChild(dirs.get(0), "fileTreeLibrary");
+		} else {
+			for (String d : dirs) {
+				addChild(d, "fileTreeLibrary", d);
+			}
+		}
 		addChild("/", "fileTreeRoot");
 		addChild(Paths.cardDirectory(), "fileTreeCard");
+	}
+
+	private void addChild(String path, String resourceKey, String summary) {
+		final ZLFile file = ZLFile.createFileByPath(path);
+		if (file != null) {
+			final ZLResource resource = Library.resource().getResource(resourceKey);
+			new FileTree(
+				this,
+				file,
+				resource.getValue(),
+				summary
+			);
+		}
 	}
 
 	private void addChild(String path, String resourceKey) {

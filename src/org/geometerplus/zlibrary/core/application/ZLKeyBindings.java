@@ -51,7 +51,7 @@ public final class ZLKeyBindings {
 			// ignore
 		}
 		try {
-			new Reader(keys).read(ZLFile.createFileByPath(Paths.BooksDirectoryOption().getValue() + "/keymap.xml"));
+			new Reader(keys).read(ZLFile.createFileByPath(Paths.firstBookDirectory() + "/keymap.xml"));
 		} catch (Exception e) {
 			// ignore
 		}

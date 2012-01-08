@@ -53,4 +53,8 @@ public abstract class ZLOption {
 			config.unsetValue(myGroup, myOptionName);
 		}
 	}
+
+	public final String getOptionName() {
+		return myOptionName;
+	}
 }

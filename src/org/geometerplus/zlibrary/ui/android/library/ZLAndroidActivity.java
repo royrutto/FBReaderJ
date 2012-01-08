@@ -29,13 +29,17 @@ import android.content.res.Configuration;
 import android.view.*;
 import android.os.PowerManager;
 
+import android.net.Uri;
+
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 
 import org.geometerplus.zlibrary.ui.android.R;
 import org.geometerplus.zlibrary.ui.android.application.ZLAndroidApplicationWindow;
 
-public abstract class ZLAndroidActivity extends Activity {
+import org.geometerplus.fbreader.formats.BigMimeTypeMap;
+
+public abstract class ZLAndroidActivity extends Activity implements ZLApplication.ExternalFileOpener {
 	protected abstract ZLApplication createApplication(ZLFile file);
 
 	private static final String REQUESTED_ORIENTATION_KEY = "org.geometerplus.zlibrary.ui.android.library.androidActiviy.RequestedOrientation";
@@ -97,9 +101,9 @@ public abstract class ZLAndroidActivity extends Activity {
 		if (androidApplication.myMainWindow == null) {
 			final ZLApplication application = createApplication(fileToOpen);
 			androidApplication.myMainWindow = new ZLAndroidApplicationWindow(application);
-			application.initWindow();
+			application.initWindow(this);
 		} else {
-			ZLApplication.Instance().openFile(fileToOpen);
+			ZLApplication.Instance().openFile(fileToOpen, this);
 		}
 		ZLApplication.Instance().getViewWidget().repaint();
 	}
@@ -186,7 +190,7 @@ public abstract class ZLAndroidActivity extends Activity {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		ZLApplication.Instance().openFile(fileFromIntent(intent));
+		ZLApplication.Instance().openFile(fileFromIntent(intent), this);
 	}
 
 	private static ZLAndroidLibrary getLibrary() {
@@ -215,4 +219,16 @@ public abstract class ZLAndroidActivity extends Activity {
 			);
 		}
 	};
+
+	public boolean openFile(String extension, ZLFile f, String appData) {
+		Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
+		LaunchIntent.setPackage(appData);
+		LaunchIntent.setData(Uri.parse("file://" + f.getPath()));
+		if (BigMimeTypeMap.getType(extension) != null) {
+			LaunchIntent.setDataAndType(Uri.parse("file://" + f.getPath()), BigMimeTypeMap.getType(extension));
+		}
+
+		startActivity(LaunchIntent);
+		return true;
+	}
 }

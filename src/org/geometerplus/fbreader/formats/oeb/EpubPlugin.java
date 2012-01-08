@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2012 Geometer Plus <contact@geometerplus.com>
+ * Copyright (C) 2007-2011 Geometer Plus <contact@geometerplus.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@ package org.geometerplus.fbreader.formats.oeb;
 
 import org.geometerplus.zlibrary.core.filesystem.*;
 
-public class OEBPlugin extends CommonOEBPlugin {
+public class EpubPlugin extends CommonOEBPlugin {
 
 	@Override
 	public boolean acceptsFile(ZLFile file) {
 		final String extension = file.getExtension();
-		return "oeb".equals(extension);
+		return "epub".equals(extension);
 	}
 
 }

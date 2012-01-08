@@ -38,6 +38,10 @@ import org.geometerplus.fbreader.tips.TipsManager;
 
 import org.geometerplus.android.fbreader.DictionaryUtil;
 
+import org.geometerplus.fbreader.formats.Formats;
+
+import android.util.Log;
+
 public class PreferenceActivity extends ZLPreferenceActivity {
 	public PreferenceActivity() {
 		super("Preferences");
@@ -427,7 +431,17 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 			keyBindings.getOption(KeyEvent.KEYCODE_BACK, true), backKeyLongPressActions
 		));
 
+		final Screen formatScreen = createPreferenceScreen("formatManaging");
+		for (String extension:Formats.getNativeFormats()) {
+			formatScreen.addFormatOption(Formats.extensionOption(extension), true);
+		}
+		for (String extension:Formats.getExternalFormats()) {
+			formatScreen.addFormatOption(Formats.extensionOption(extension), false);
+		}
+		formatScreen.addNewFormatOption();
+
 		final Screen tipsScreen = createPreferenceScreen("tips");
 		tipsScreen.addOption(TipsManager.Instance().ShowTipsOption, "showTips");
 	}
+
 }

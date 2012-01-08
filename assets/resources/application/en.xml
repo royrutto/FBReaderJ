@@ -638,6 +638,9 @@
 					<node name="none" value="No action"/>
 				</node>
 			</node>
+			<node name="formatManaging" value="Supported formats">
+				<node name="addNewFormat" value="Add"/>
+			</node>
 			<node name="tips" value="Tips">
 				<node name="summary" value="Daily tips settings"/>
 				<node name="showTips" value="Show tips">

@@ -29,14 +29,16 @@ import org.geometerplus.fbreader.library.Book;
 import org.geometerplus.fbreader.formats.*;
 import org.geometerplus.fbreader.Paths;
 
+import org.geometerplus.zlibrary.core.application.ZLApplication;
+
 public final class BookModel {
-	public static BookModel createModel(Book book) {
+	public static BookModel createModel(Book book, ZLApplication.ExternalFileOpener efo) {
 		FormatPlugin plugin = PluginCollection.Instance().getPlugin(book.File);
 		if (plugin == null) {
 			return null;
 		}
-		BookModel model = new BookModel(book);
-		if (plugin.readModel(model)) {
+		BookModel model = new BookModel(book, plugin);
+		if (plugin.readModel(model, efo)) {
 			return model;
 		}
 		return null;
@@ -45,6 +47,7 @@ public final class BookModel {
 	private final ZLImageMap myImageMap = new ZLImageMap(); 
 	
 	public final Book Book;
+	public final FormatPlugin Plugin;
 	public final ZLTextModel BookTextModel;
 	public final TOCTree TOCTree = new TOCTree();
 
@@ -64,8 +67,9 @@ public final class BookModel {
 	//	return Constants.CACHE_DIRECTORY + "/links" + index + ".cache";
 	//}
 
-	private BookModel(Book book) {
+	private BookModel(Book book, FormatPlugin plugin) {
 		Book = book;
+		Plugin = plugin;
 		BookTextModel = new ZLTextWritablePlainModel(null, book.getLanguage(), 1024, 65536, Paths.cacheDirectory(), "cache", myImageMap);
 		//for (int i = 0; i < 50; ++i) {
 		//	new File(linksFileName(i)).delete();

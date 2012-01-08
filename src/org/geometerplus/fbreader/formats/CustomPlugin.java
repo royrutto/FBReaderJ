@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2012 Geometer Plus <contact@geometerplus.com>
+ * Copyright (C) 2007-2011 Geometer Plus <contact@geometerplus.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,38 +17,43 @@
  * 02110-1301, USA.
  */
 
-package org.geometerplus.fbreader.formats.html;
-
-import java.io.IOException;
+package org.geometerplus.fbreader.formats;
 
 import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.library.Book;
-import org.geometerplus.fbreader.formats.FormatPlugin;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
+import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 
-public class HtmlPlugin extends FormatPlugin {
-	
+public class CustomPlugin extends FormatPlugin {
+	private String myFormat;
+	private ZLStringOption myOption;
+
+	CustomPlugin(String extension) {
+		myFormat = extension;
+		myOption = Formats.extensionOption(myFormat);
+	}
+
+	@Override
+	public boolean isNative() {
+		return false;
+	}
+
 	@Override
 	public boolean acceptsFile(ZLFile file) {
-		return "htm".equals(file.getExtension()) 
-			|| "html".equals(file.getExtension());
+		return myFormat.equals(file.getExtension());
 	}
-
+	
 	@Override
 	public boolean readMetaInfo(Book book) {
-		return new HtmlMetaInfoReader(book).readMetaInfo();
+		return true;
 	}
-
+	
 	@Override
 	public boolean readModel(BookModel model, ZLApplication.ExternalFileOpener efo) {
-		try {
-			return new HtmlReader(model).readBook();
-		} catch (IOException e) {
-			return false;
-		}
+		return efo.openFile(myFormat, model.Book.File, myOption.getValue());
 	}
 
 	@Override

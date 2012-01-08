@@ -29,12 +29,14 @@ import android.content.Intent;
 import org.geometerplus.zlibrary.core.options.*;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 
+import org.geometerplus.fbreader.formats.Formats;
+
 abstract class ZLPreferenceActivity extends android.preference.PreferenceActivity {
 	public static String SCREEN_KEY = "screen";
 
 	private final HashMap<String,Screen> myScreenMap = new HashMap<String,Screen>();
 
-	protected class Screen {
+	public class Screen {
 		public final ZLResource Resource;
 		private final PreferenceScreen myScreen;
 
@@ -60,6 +62,10 @@ abstract class ZLPreferenceActivity extends android.preference.PreferenceActivit
 			return preference;
 		}
 
+		public void removePreference(Preference preference) {
+			myScreen.removePreference((Preference)preference);
+		}
+
 		public Preference addOption(ZLBooleanOption option, String resourceKey) {
 			return addPreference(
 				new ZLBooleanPreference(ZLPreferenceActivity.this, option, Resource, resourceKey)
@@ -69,6 +75,18 @@ abstract class ZLPreferenceActivity extends android.preference.PreferenceActivit
 		public Preference addOption(ZLStringOption option, String resourceKey) {
 			return addPreference(
 				new ZLStringOptionPreference(ZLPreferenceActivity.this, option, Resource, resourceKey)
+			);
+		}
+
+		public Preference addFormatOption(ZLStringOption option, boolean isNative) {
+			return addPreference(
+				new FormatPreference(ZLPreferenceActivity.this, option, Formats.optionToExtension(option.getOptionName()), isNative, this)
+			);
+		}
+
+		public Preference addNewFormatOption() {
+			return addPreference(
+				new AddFormatPreference(ZLPreferenceActivity.this, this)
 			);
 		}
 

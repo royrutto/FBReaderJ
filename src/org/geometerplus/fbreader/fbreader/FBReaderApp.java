@@ -139,8 +139,8 @@ public final class FBReaderApp extends ZLApplication {
 		setView(BookTextView);
 	}
 
-	public void initWindow() {
-		super.initWindow();
+	public void initWindow(final ZLApplication.ExternalFileOpener efo) {
+		super.initWindow(efo);
 		wait("loadingBook", new Runnable() {
 			public void run() {
 				Book book = createBookForFile(ZLFile.createFileByPath(myArg0));
@@ -150,12 +150,12 @@ public final class FBReaderApp extends ZLApplication {
 				if ((book == null) || !book.File.exists()) {
 					book = Book.getByFile(Library.getHelpFile());
 				}
-				openBookInternal(book, null);
+				openBookInternal(book, null, efo);
 			}
 		});
 	}
 
-	public void openBook(final Book book, final Bookmark bookmark) {
+	public void openBook(final Book book, final Bookmark bookmark, final ZLApplication.ExternalFileOpener efo) {
 		if (book == null) {
 			return;
 		}
@@ -166,7 +166,7 @@ public final class FBReaderApp extends ZLApplication {
 		}
 		wait("loadingBook", new Runnable() {
 			public void run() {
-				openBookInternal(book, bookmark);
+				openBookInternal(book, bookmark, efo);
 			}
 		});
 	}
@@ -219,8 +219,12 @@ public final class FBReaderApp extends ZLApplication {
 		FootnoteView.clearCaches();
 	}
 
-	void openBookInternal(Book book, Bookmark bookmark) {
+	void openBookInternal(Book book, Bookmark bookmark, final ZLApplication.ExternalFileOpener efo) {
 		if (book != null) {
+			BookModel PreModel = BookModel.createModel(book, efo);
+			if (PreModel != null && !PreModel.Plugin.isNative()) {
+				return; /*  external opening  */
+			}
 			onViewChanged();
 
 			if (Model != null) {
@@ -233,7 +237,7 @@ public final class FBReaderApp extends ZLApplication {
 			Model = null;
 			System.gc();
 			System.gc();
-			Model = BookModel.createModel(book);
+			Model = PreModel;
 			if (Model != null) {
 				ZLTextHyphenator.Instance().load(book.getLanguage());
 				BookTextView.setModel(Model.BookTextModel);
@@ -300,10 +304,10 @@ public final class FBReaderApp extends ZLApplication {
 	}
 
 	@Override
-	public void openFile(ZLFile file) {
+	public void openFile(ZLFile file, final ZLApplication.ExternalFileOpener efo) {
 		final Book book = createBookForFile(file);
 		if (book != null) {
-			openBook(book, null);
+			openBook(book, null, efo);
 		}
 	}
 
@@ -367,7 +371,7 @@ public final class FBReaderApp extends ZLApplication {
 		return myCancelActionsList;
 	}
 
-	public void runCancelAction(int index) {
+	public void runCancelAction(int index, final ZLApplication.ExternalFileOpener efo) {
 		if (index < 0 || index >= myCancelActionsList.size()) {
 			return;
 		}
@@ -375,7 +379,7 @@ public final class FBReaderApp extends ZLApplication {
 		final CancelActionDescription description = myCancelActionsList.get(index);
 		switch (description.Type) {
 			case previousBook:
-				openBook(Library.getPreviousBook(), null);
+				openBook(Library.getPreviousBook(), null, efo);
 				break;
 			case returnTo:
 			{

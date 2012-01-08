@@ -235,3 +235,4 @@ public class ScanLocalNetworkActivity extends ListActivity {
 		}
 	}
 }
+

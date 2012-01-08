@@ -30,7 +30,7 @@ import android.preference.EditTextPreference;
 
 import android.util.Log;
 
-class AddFormatPreference extends EditTextPreference implements ZLPreference {
+class AddFormatPreference extends EditTextPreference {
 	private final Screen myScreen;
 
 	AddFormatPreference(Context context, Screen scr) {
@@ -51,9 +51,6 @@ class AddFormatPreference extends EditTextPreference implements ZLPreference {
 			}
 		}
 		super.onDialogClosed(result);
-	}
-
-	public void onAccept() {
 	}
 
 }

@@ -37,7 +37,7 @@ import org.geometerplus.android.fbreader.preferences.ZLPreferenceActivity.Screen
 
 import android.util.Log;
 
-class FormatPreference extends ListPreference implements ZLPreference {
+class FormatPreference extends ListPreference {
 	private final ZLStringOption myOption;
 	private final HashSet<String> myPaths = new HashSet<String>();
 	private final Screen myScreen;
@@ -93,8 +93,4 @@ class FormatPreference extends ListPreference implements ZLPreference {
 			}
 		}
 	}
-
-	public void onAccept() {
-	}
-
 }

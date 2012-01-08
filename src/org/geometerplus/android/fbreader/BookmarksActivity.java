@@ -33,12 +33,19 @@ import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
 import org.geometerplus.zlibrary.ui.android.R;
 
+import android.net.Uri;
+
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.fbreader.library.*;
 
+
+import org.geometerplus.zlibrary.core.application.ZLApplication;
+import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.android.util.UIUtil;
 
-public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuItemClickListener {
+import org.geometerplus.fbreader.formats.BigMimeTypeMap;
+
+public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuItemClickListener, ZLApplication.ExternalFileOpener {
 	private static final int OPEN_ITEM_ID = 0;
 	private static final int EDIT_ITEM_ID = 1;
 	private static final int DELETE_ITEM_ID = 2;
@@ -315,5 +322,17 @@ public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuIte
 				addBookmark();
 			}
 		}
+	}
+
+	public boolean openFile(String extension, ZLFile f, String appData) {
+		Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
+		LaunchIntent.setPackage(appData);
+		LaunchIntent.setData(Uri.parse("file://" + f.getPath()));
+		if (BigMimeTypeMap.getType(extension) != null) {
+			LaunchIntent.setDataAndType(Uri.parse("file://" + f.getPath()), BigMimeTypeMap.getType(extension));
+		}
+
+		startActivity(LaunchIntent);
+		return true;
 	}
 }

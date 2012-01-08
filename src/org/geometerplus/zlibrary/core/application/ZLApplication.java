@@ -25,9 +25,12 @@ import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.view.ZLView;
 import org.geometerplus.zlibrary.core.view.ZLViewWidget;
 
-import android.content.Context;
-
 public abstract class ZLApplication {
+
+	public interface ExternalFileOpener {
+		boolean openFile(String extension, ZLFile f, String appData);
+	}
+
 	public static ZLApplication Instance() {
 		return ourInstance;
 	}
@@ -65,7 +68,7 @@ public abstract class ZLApplication {
 		myWindow = window;
 	}
 
-	public void initWindow() {
+	public void initWindow(final ExternalFileOpener efo) {
 		setView(myView);
 	}
 
@@ -179,7 +182,7 @@ public abstract class ZLApplication {
 	public void onWindowClosing() {
 	}
 
-	public abstract void openFile(ZLFile file, final Context context);
+	public abstract void openFile(ZLFile file, final ExternalFileOpener efo);
 
 	//Action
 	static abstract public class ZLAction {

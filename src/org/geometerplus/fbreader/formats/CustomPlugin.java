@@ -21,17 +21,11 @@ package org.geometerplus.fbreader.formats;
 
 import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.library.Book;
-import org.geometerplus.fbreader.formats.FormatPlugin;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
-import android.content.Intent;
-import android.content.Context;
-
-import android.net.Uri;
-
-import android.util.Log;
+import org.geometerplus.zlibrary.core.application.ZLApplication;
 
 public class CustomPlugin extends FormatPlugin {
 	private String myFormat;
@@ -58,16 +52,8 @@ public class CustomPlugin extends FormatPlugin {
 	}
 	
 	@Override
-	public boolean readModel(BookModel model, Context context) {
-		Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
-		LaunchIntent.setPackage(myOption.getValue());
-		LaunchIntent.setData(Uri.parse("file://" + model.Book.File.getPath()));
-		if (BigMimeTypeMap.getType(myFormat) != null) {
-			LaunchIntent.setDataAndType(Uri.parse("file://" + model.Book.File.getPath()), BigMimeTypeMap.getType(myFormat));
-		}
-
-		context.startActivity(LaunchIntent);
-		return true;
+	public boolean readModel(BookModel model, ZLApplication.ExternalFileOpener efo) {
+		return efo.openFile(myFormat, model.Book.File, myOption.getValue());
 	}
 
 	@Override

@@ -25,7 +25,7 @@ import org.geometerplus.fbreader.formats.FormatPlugin;
 import org.geometerplus.zlibrary.core.filesystem.*;
 import org.geometerplus.zlibrary.core.image.ZLImage;
 
-import android.content.Context;
+import org.geometerplus.zlibrary.core.application.ZLApplication;
 
 public class CommonOEBPlugin extends FormatPlugin {
 	public boolean acceptsFile(ZLFile file) {
@@ -66,7 +66,7 @@ public class CommonOEBPlugin extends FormatPlugin {
 	}
 	
 	@Override
-	public boolean readModel(BookModel model, Context context) {
+	public boolean readModel(BookModel model, ZLApplication.ExternalFileOpener efo) {
 		model.Book.File.setCached(true);
 		final ZLFile opfFile = getOpfFile(model.Book.File);
 		return (opfFile != null) ? new OEBBookReader(model).readBook(opfFile) : false;

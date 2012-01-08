@@ -31,8 +31,6 @@ import org.geometerplus.fbreader.Paths;
 
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 
-import android.content.Context;
-
 public final class BookModel {
 	public static BookModel createModel(Book book, ZLApplication.ExternalFileOpener efo) {
 		FormatPlugin plugin = PluginCollection.Instance().getPlugin(book.File);

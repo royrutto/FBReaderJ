@@ -24,7 +24,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
 import android.content.Intent;
-import android.preference.ListPreference;
+import android.preference.*;
 
 import android.net.Uri;
 
@@ -35,12 +35,16 @@ import org.geometerplus.fbreader.formats.Formats;
 import org.geometerplus.fbreader.formats.BigMimeTypeMap;
 import org.geometerplus.android.fbreader.preferences.ZLPreferenceActivity.Screen;
 
+import android.app.AlertDialog;
+
 import android.util.Log;
 
 class FormatPreference extends ListPreference {
 	private final ZLStringOption myOption;
 	private final HashSet<String> myPaths = new HashSet<String>();
 	private final Screen myScreen;
+	private final String myFormat;
+	private final boolean myIsNative;
 
 	FormatPreference(Context context, ZLStringOption option, String formatName, boolean isNative, Screen scr) {
 		super(context);
@@ -48,15 +52,36 @@ class FormatPreference extends ListPreference {
 		myOption = option;
 		setTitle(formatName);
 		myScreen = scr;
+		myFormat = formatName;
+		myIsNative = isNative;
+//		fillList();
+		if (myOption.getValue() != "") {
+			final PackageManager pm = getContext().getPackageManager();
+			try {
+				ApplicationInfo info = pm.getApplicationInfo(myOption.getValue(), 0);
+				setSummary(info.loadLabel(pm).toString());
+			} catch (PackageManager.NameNotFoundException e) {
+				//TODO
+			}
+		} else {
+			setSummary("Application is not chosen");
+		}
+	}
 
-		final PackageManager pm = context.getPackageManager();
+	protected void onClick() {
+		fillList();
+		super.onClick();
+	}
+
+	protected void fillList() {
+		final PackageManager pm = getContext().getPackageManager();
 		ArrayList<String> names = new ArrayList<String>();
 		ArrayList<String> values = new ArrayList<String>();
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setData(Uri.parse("file:///sdcard/fgsfds." + formatName));
-		final String mimeType = BigMimeTypeMap.getType(formatName);
+		intent.setData(Uri.parse("file:///sdcard/fgsfds." + myFormat));
+		final String mimeType = BigMimeTypeMap.getType(myFormat);
 		if (mimeType != null) {
-			intent.setDataAndType(Uri.parse("file:///sdcard/fgsfds." + formatName), mimeType);
+			intent.setDataAndType(Uri.parse("file:///sdcard/fgsfds." + myFormat), mimeType);
 		}
 		for (ResolveInfo packageInfo : pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)) {
 			if (!myPaths.contains(packageInfo.activityInfo.applicationInfo.packageName)) {
@@ -65,7 +90,8 @@ class FormatPreference extends ListPreference {
 				myPaths.add(packageInfo.activityInfo.applicationInfo.packageName);
 			}
 		}
-		if (!isNative) {
+		myPaths.clear();
+		if (!myIsNative) {
 			values.add("DELETE");
 			names.add("Delete this format");
 		}
@@ -74,9 +100,7 @@ class FormatPreference extends ListPreference {
 		if (myOption.getValue() != "") {
 			setValue(myOption.getValue());
 		}
-		if (getEntry() != null) {
-			setSummary(getEntry());
-		}
+
 	}
 
 	@Override

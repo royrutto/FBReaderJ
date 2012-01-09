@@ -31,6 +31,11 @@ import android.os.PowerManager;
 
 import android.net.Uri;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
+import org.geometerplus.zlibrary.core.resources.ZLResource;
+
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 
@@ -227,8 +232,23 @@ public abstract class ZLAndroidActivity extends Activity implements ZLApplicatio
 		if (BigMimeTypeMap.getType(extension) != null) {
 			LaunchIntent.setDataAndType(Uri.parse("file://" + f.getPath()), BigMimeTypeMap.getType(extension));
 		}
-
-		startActivity(LaunchIntent);
+		try {
+			startActivity(LaunchIntent);
+		} catch (ActivityNotFoundException e) {
+			runOnUiThread(new Runnable() {
+			    public void run() {
+				final String title = ZLResource.resource("errorMessage").getResource("externalNotFound").getValue();
+				new AlertDialog.Builder(ZLAndroidActivity.this)
+					.setTitle(title)
+					.setIcon(0)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+						}
+					})
+					.create().show();
+			    }
+			});
+		}
 		return true;
 	}
 }

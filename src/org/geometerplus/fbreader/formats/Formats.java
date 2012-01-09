@@ -29,7 +29,7 @@ public abstract class Formats {
 	public static final int EXTERNAL = 1;
 	public static final int UNDEFINED = 2;
 
-	private static String NATIVE_FORMATS = "epub;oeb;fb2;mobi;prc";
+	private static String NATIVE_FORMATS = "epub;oeb;fb2;mobi";
 
 	public static String extensionToOption(String extension) {
 		return "FORMAT_" + extension;
@@ -59,6 +59,7 @@ public abstract class Formats {
 		if (extension.equals("")) return false;
 		if (extension.equals("opf")) return false;
 		if (extension.contains(";")) return false;
+		if (extension.contains(" ")) return false;
 		if (extension.contains(".")) return false;
 		return true;
 	}

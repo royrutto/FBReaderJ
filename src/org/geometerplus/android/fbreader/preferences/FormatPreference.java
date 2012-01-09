@@ -80,7 +80,16 @@ class FormatPreference extends ListPreference {
 		super.onClick();
 	}
 
-	protected void fillList() {
+	public boolean runIfNotEmpty() {
+		if (fillList()) {
+			super.onClick();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	protected boolean fillList() {
 		final PackageManager pm = getContext().getPackageManager();
 		ArrayList<String> names = new ArrayList<String>();
 		ArrayList<String> values = new ArrayList<String>();
@@ -97,6 +106,7 @@ class FormatPreference extends ListPreference {
 				myPaths.add(packageInfo.activityInfo.applicationInfo.packageName);
 			}
 		}
+		boolean foundSomething = (values.size() > 0);
 		myPaths.clear();
 		if (!myIsNative) {
 			final String deleteItem = ZLResource.resource("dialog")
@@ -112,6 +122,7 @@ class FormatPreference extends ListPreference {
 		if (myOption.getValue() != "") {
 			setValue(myOption.getValue());
 		}
+		return foundSomething;
 
 	}
 

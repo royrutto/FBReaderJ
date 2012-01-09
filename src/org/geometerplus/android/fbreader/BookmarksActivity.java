@@ -331,8 +331,23 @@ public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuIte
 		if (BigMimeTypeMap.getType(extension) != null) {
 			LaunchIntent.setDataAndType(Uri.parse("file://" + f.getPath()), BigMimeTypeMap.getType(extension));
 		}
-
-		startActivity(LaunchIntent);
+		try {
+			startActivity(LaunchIntent);
+		} catch (ActivityNotFoundException e) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					final String title = ZLResource.resource("errorMessage").getResource("externalNotFound").getValue();
+					new AlertDialog.Builder(BookmarksActivity.this)
+						.setTitle(title)
+						.setIcon(0)
+						.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						})
+						.create().show();
+					}
+			});
+		}
 		return true;
 	}
 }

@@ -236,17 +236,17 @@ public abstract class ZLAndroidActivity extends Activity implements ZLApplicatio
 			startActivity(LaunchIntent);
 		} catch (ActivityNotFoundException e) {
 			runOnUiThread(new Runnable() {
-			    public void run() {
-				final String title = ZLResource.resource("errorMessage").getResource("externalNotFound").getValue();
-				new AlertDialog.Builder(ZLAndroidActivity.this)
-					.setTitle(title)
-					.setIcon(0)
-					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-						}
-					})
-					.create().show();
-			    }
+				public void run() {
+					final String title = ZLResource.resource("errorMessage").getResource("externalNotFound").getValue();
+					new AlertDialog.Builder(ZLAndroidActivity.this)
+						.setTitle(title)
+						.setIcon(0)
+						.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						})
+						.create().show();
+					}
 			});
 		}
 		return true;

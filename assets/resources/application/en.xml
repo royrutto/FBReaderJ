@@ -643,7 +643,6 @@
 				<node name="addNewFormat" value="Add new format"/>
 				<node name="deleteFormat" value="Remove this format"/>
 				<node name="appNotSet" value="Application is not chosen"/>
-				<node name="appNotFound" value="No suitable application found"/>
 			</node>
 			<node name="tips" value="Tips">
 				<node name="summary" value="Daily tips settings"/>
@@ -745,6 +744,8 @@
 		<node name="emptyBasket" value="Your basket is empty, sorry"/>
 		<node name="emptyNetworkSearchResults" value="No books found, sorry"/>
 		<node name="externalNotFound" value="Cannot open external application. Maybe it was removed?"/>
+		<node name="appNotFound" value="No suitable application found"/>
+		<node name="invalidFormat" value="Format is invalid or already exists"/>
 	</node>
 	<node name="external">
 		<node name="browser" value="Browser"/>

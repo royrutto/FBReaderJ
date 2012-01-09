@@ -639,7 +639,7 @@
 				</node>
 			</node>
 			<node name="formatManaging" value="Supported formats">
-				<node name="subTitle" value="Manage external applications"/>
+				<node name="summary" value="Manage external applications"/>
 				<node name="addNewFormat" value="Add new format"/>
 				<node name="deleteFormat" value="Remove this format"/>
 				<node name="appNotSet" value="Application is not chosen"/>

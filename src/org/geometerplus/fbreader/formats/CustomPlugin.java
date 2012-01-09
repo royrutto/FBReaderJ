@@ -29,11 +29,9 @@ import org.geometerplus.zlibrary.core.application.ZLApplication;
 
 public class CustomPlugin extends FormatPlugin {
 	private String myFormat;
-	private ZLStringOption myOption;
 
 	CustomPlugin(String extension) {
 		myFormat = extension;
-		myOption = Formats.extensionOption(myFormat);
 	}
 
 	@Override
@@ -53,7 +51,7 @@ public class CustomPlugin extends FormatPlugin {
 	
 	@Override
 	public boolean readModel(BookModel model, ZLApplication.ExternalFileOpener efo) {
-		return efo.openFile(myFormat, model.Book.File, myOption.getValue());
+		return efo.openFile(myFormat, model.Book.File, Formats.extensionOption(myFormat).getValue());
 	}
 
 	@Override

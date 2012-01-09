@@ -38,7 +38,12 @@ class AddFormatPreference extends EditTextPreference {
 
 		myScreen = scr;
 
-		setTitle("Add file format");
+		final String title = ZLResource.resource("dialog")
+			.getResource("Preferences")
+			.getResource("formatManaging")
+			.getResource("Add new format")
+			.getValue();
+		setTitle("title");
 		setOrder(100500);
 		getEditText().setSingleLine();
 	}

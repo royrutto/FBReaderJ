@@ -2,8 +2,6 @@
 <mimetypes>
 <file ext="gz" type="application/x-gzip"/>
 <file ext="tgz" type="application/x-gzip"/>
-<file ext="tgz" type="application/x-gzip"/>
-<file ext="shtml" type="text/html"/>
 <file ext="shtml" type="text/html"/>
 <file ext="html" type="text/html"/>
 <file ext="htm" type="text/html"/>
@@ -11,14 +9,9 @@
 <file ext="tgz" type="application/x-tar"/>
 <file ext="tar" type="application/x-tar"/>
 <file ext="wbmp" type="image/vnd.wap.wbmp"/>
-<file ext="wbmp" type="image/vnd.wap.wbmp"/>
-<file ext="wml" type="text/vnd.wap.wml"/>
 <file ext="wml" type="text/vnd.wap.wml"/>
 <file ext="wmlc" type="application/vnd.wap.wmlc"/>
-<file ext="wmlc" type="application/vnd.wap.wmlc"/>
 <file ext="wmls" type="text/vnd.wap.wmlscript"/>
-<file ext="wmls" type="text/vnd.wap.wmlscript"/>
-<file ext="wmlsc" type="application/vnd.wap.wmlscriptc"/>
 <file ext="wmlsc" type="application/vnd.wap.wmlscriptc"/>
 <file ext="3dml" type="text/vnd.in3d.3dml"/>
 <file ext="3g2" type="video/3gpp2"/>
@@ -618,7 +611,6 @@
 <file ext="xltm" type="application/vnd.ms-excel.template.macroenabled.12"/>
 <file ext="xltx" type="application/vnd.openxmlformats-officedocument.spreadsheetml.template"/>
 <file ext="xml" type="application/xml"/>
-<file ext="xsl" type="application/xml"/>
 <file ext="xsl" type="application/xml"/>
 <file ext="xo" type="application/vnd.olpc-sugar"/>
 <file ext="xop" type="application/xop+xml"/>

@@ -746,6 +746,7 @@
 		<node name="externalNotFound" value="Cannot open external application. Maybe it was removed?"/>
 		<node name="appNotFound" value="No suitable application found"/>
 		<node name="invalidFormat" value="Format is invalid or already exists"/>
+		<node name="unzipFailed" value="Failed to unzip book for external use"/>
 	</node>
 	<node name="external">
 		<node name="browser" value="Browser"/>

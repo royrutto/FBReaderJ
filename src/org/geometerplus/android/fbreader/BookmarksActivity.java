@@ -31,22 +31,17 @@ import android.content.*;
 import org.geometerplus.zlibrary.core.util.ZLMiscUtil;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
+import org.geometerplus.zlibrary.ui.android.library.ZLAndroidActivity;
 
 import org.geometerplus.zlibrary.ui.android.R;
-
-import android.net.Uri;
 
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.fbreader.library.*;
 
-
 import org.geometerplus.zlibrary.core.application.ZLApplication;
-import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.android.util.UIUtil;
 
-import org.geometerplus.fbreader.formats.BigMimeTypeMap;
-
-public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuItemClickListener, ZLApplication.ExternalFileOpener {
+public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuItemClickListener {
 	private static final int OPEN_ITEM_ID = 0;
 	private static final int EDIT_ITEM_ID = 1;
 	private static final int DELETE_ITEM_ID = 2;
@@ -58,6 +53,8 @@ public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuIte
 	private ListView myThisBookView;
 	private ListView myAllBooksView;
 	private ListView mySearchResultsView;
+
+	private final ZLAndroidActivity.FileOpener myFileOpener = new ZLAndroidActivity.FileOpener(this);
 
 	private final ZLResource myResource = ZLResource.resource("bookmarksView");
 	private final ZLStringOption myBookmarkSearchPatternOption =
@@ -233,7 +230,7 @@ public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuIte
 			final Book book = Book.getById(bookId);
 			if (book != null) {
 				finish();
-				fbreader.openBook(book, bookmark, this);
+				fbreader.openBook(book, bookmark, myFileOpener);
 			} else {
 				UIUtil.showErrorMessage(this, "cannotOpenBook");
 			}
@@ -323,65 +320,5 @@ public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuIte
 				addBookmark();
 			}
 		}
-	}
-
-	private void showErrorDialog(final String errName) {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				final String title = ZLResource.resource("errorMessage").getResource(errName).getValue();
-				new AlertDialog.Builder(BookmarksActivity.this)
-					.setTitle(title)
-					.setIcon(0)
-					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-						}
-					})
-					.create().show();
-				}
-		});
-	}
-
-	public boolean openFile(String extension, ZLFile f, String appData) {
-		Uri uri = null;
-		if (f.getPath().contains(":")) {
-
-			try {
-				String filepath = f.getPath();
-				int p1 = filepath.lastIndexOf(":");
-				String filename = filepath.substring(p1 + 1);
-				p1 = filename.lastIndexOf(".");
-				filename = filename.substring(0, p1);
-				File tmpfile = File.createTempFile(filename, "." + extension);
-				OutputStream out = new FileOutputStream(tmpfile);
-
-				int read = 0;
-				byte[] bytes = new byte[65536];
-				InputStream inp = f.getInputStream();
-
-				while ((read = inp.read(bytes)) > 0) {
-					out.write(bytes, 0, read);
-				}
-				out.flush();
-				out.close();
-				uri = Uri.fromFile(tmpfile);
-			} catch (IOException e) {
-				showErrorDialog("unzipFailed");
-				return true;
-			}
-		} else {
-			uri = Uri.parse("file://" + f.getPath());
-		}
-		Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
-		LaunchIntent.setPackage(appData);
-		LaunchIntent.setData(uri);
-		if (BigMimeTypeMap.getType(extension) != null) {
-			LaunchIntent.setDataAndType(uri, BigMimeTypeMap.getType(extension));
-		}
-		try {
-			startActivity(LaunchIntent);
-		} catch (ActivityNotFoundException e) {
-			showErrorDialog("externalNotFound");
-		}
-		return true;
 	}
 }

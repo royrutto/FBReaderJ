@@ -46,8 +46,6 @@ import org.geometerplus.zlibrary.ui.android.application.ZLAndroidApplicationWind
 
 import org.geometerplus.fbreader.formats.BigMimeTypeMap;
 
-import android.util.Log;
-
 public abstract class ZLAndroidActivity extends Activity implements ZLApplication.ExternalFileOpener {
 	protected abstract ZLApplication createApplication(ZLFile file);
 
@@ -260,8 +258,9 @@ public abstract class ZLAndroidActivity extends Activity implements ZLApplicatio
 
 				int read = 0;
 				byte[] bytes = new byte[65536];
+				InputStream inp = f.getInputStream();
 
-				while ((read = f.getInputStream().read(bytes)) > 0) {
+				while ((read = inp.read(bytes)) > 0) {
 					out.write(bytes, 0, read);
 				}
 				out.flush();
@@ -269,7 +268,6 @@ public abstract class ZLAndroidActivity extends Activity implements ZLApplicatio
 				uri = Uri.fromFile(tmpfile);
 			} catch (IOException e) {
 				showErrorDialog("unzipFailed");
-Log.d("fbreader", e.getMessage());
 				return true;
 			}
 		} else {

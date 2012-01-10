@@ -20,6 +20,7 @@
 package org.geometerplus.android.fbreader;
 
 import java.util.*;
+import java.io.*;
 
 import android.app.*;
 import android.os.*;
@@ -324,29 +325,62 @@ public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuIte
 		}
 	}
 
+	private void showErrorDialog(final String errName) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				final String title = ZLResource.resource("errorMessage").getResource(errName).getValue();
+				new AlertDialog.Builder(BookmarksActivity.this)
+					.setTitle(title)
+					.setIcon(0)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+						}
+					})
+					.create().show();
+				}
+		});
+	}
+
 	public boolean openFile(String extension, ZLFile f, String appData) {
+		Uri uri = null;
+		if (f.getPath().contains(":")) {
+
+			try {
+				String filepath = f.getPath();
+				int p1 = filepath.lastIndexOf(":");
+				String filename = filepath.substring(p1 + 1);
+				p1 = filename.lastIndexOf(".");
+				filename = filename.substring(0, p1);
+				File tmpfile = File.createTempFile(filename, "." + extension);
+				OutputStream out = new FileOutputStream(tmpfile);
+
+				int read = 0;
+				byte[] bytes = new byte[65536];
+				InputStream inp = f.getInputStream();
+
+				while ((read = inp.read(bytes)) > 0) {
+					out.write(bytes, 0, read);
+				}
+				out.flush();
+				out.close();
+				uri = Uri.fromFile(tmpfile);
+			} catch (IOException e) {
+				showErrorDialog("unzipFailed");
+				return true;
+			}
+		} else {
+			uri = Uri.parse("file://" + f.getPath());
+		}
 		Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
 		LaunchIntent.setPackage(appData);
-		LaunchIntent.setData(Uri.parse("file://" + f.getPath()));
+		LaunchIntent.setData(uri);
 		if (BigMimeTypeMap.getType(extension) != null) {
-			LaunchIntent.setDataAndType(Uri.parse("file://" + f.getPath()), BigMimeTypeMap.getType(extension));
+			LaunchIntent.setDataAndType(uri, BigMimeTypeMap.getType(extension));
 		}
 		try {
 			startActivity(LaunchIntent);
 		} catch (ActivityNotFoundException e) {
-			runOnUiThread(new Runnable() {
-				public void run() {
-					final String title = ZLResource.resource("errorMessage").getResource("externalNotFound").getValue();
-					new AlertDialog.Builder(BookmarksActivity.this)
-						.setTitle(title)
-						.setIcon(0)
-						.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {
-							}
-						})
-						.create().show();
-					}
-			});
+			showErrorDialog("externalNotFound");
 		}
 		return true;
 	}

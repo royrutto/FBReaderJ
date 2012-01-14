@@ -464,7 +464,15 @@ public final class Library {
 
 	public static Book getRecentBook() {
 		List<Long> recentIds = BooksDatabase.Instance().loadRecentBookIds();
-		return recentIds.size() > 0 ? Book.getById(recentIds.get(0)) : null;
+		for (Long id : recentIds) {
+			try {
+				if (PluginCollection.Instance().getPlugin(Book.getById(id).File).isNative()) {
+					return Book.getById(id);
+				}
+			} catch (NullPointerException e) {
+			}
+		}
+		return null;
 	}
 
 	public static Book getPreviousBook() {

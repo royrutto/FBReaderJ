@@ -21,6 +21,8 @@ package org.geometerplus.zlibrary.ui.android.library;
 
 import java.lang.reflect.*;
 
+import java.io.*;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.content.*;
@@ -31,6 +33,11 @@ import android.os.PowerManager;
 
 import android.net.Uri;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
+import org.geometerplus.zlibrary.core.resources.ZLResource;
+
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 
@@ -39,11 +46,82 @@ import org.geometerplus.zlibrary.ui.android.application.ZLAndroidApplicationWind
 
 import org.geometerplus.fbreader.formats.BigMimeTypeMap;
 
-public abstract class ZLAndroidActivity extends Activity implements ZLApplication.ExternalFileOpener {
+public abstract class ZLAndroidActivity extends Activity {
+
+	public static class FileOpener implements ZLApplication.ExternalFileOpener {
+		private final Activity myActivity;
+
+		public FileOpener(Activity activity) {
+			myActivity = activity;
+		}
+
+		private void showErrorDialog(final String errName) {
+			myActivity.runOnUiThread(new Runnable() {
+				public void run() {
+					final String title = ZLResource.resource("errorMessage").getResource(errName).getValue();
+					new AlertDialog.Builder(myActivity)
+						.setTitle(title)
+						.setIcon(0)
+						.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						})
+						.create().show();
+					}
+			});
+		}
+
+		public boolean openFile(String extension, ZLFile f, String appData) {
+			Uri uri = null;
+			if (f.getPath().contains(":")) {
+
+				try {
+					String filepath = f.getPath();
+					int p1 = filepath.lastIndexOf(":");
+					String filename = filepath.substring(p1 + 1);
+					p1 = filename.lastIndexOf(".");
+					filename = filename.substring(0, p1);
+					File tmpfile = File.createTempFile(filename, "." + extension);
+					OutputStream out = new FileOutputStream(tmpfile);
+
+					int read = 0;
+					byte[] bytes = new byte[1024];
+					InputStream inp = f.getInputStream();
+
+					while ((read = inp.read(bytes)) > 0) {
+						out.write(bytes, 0, read);
+					}
+					out.flush();
+					out.close();
+					uri = Uri.fromFile(tmpfile);
+				} catch (IOException e) {
+					showErrorDialog("unzipFailed");
+					return true;
+				}
+			} else {
+				uri = Uri.parse("file://" + f.getPath());
+			}
+			Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
+			LaunchIntent.setPackage(appData);
+			LaunchIntent.setData(uri);
+			if (BigMimeTypeMap.getType(extension) != null) {
+				LaunchIntent.setDataAndType(uri, BigMimeTypeMap.getType(extension));
+			}
+			try {
+				myActivity.startActivity(LaunchIntent);
+			} catch (ActivityNotFoundException e) {
+				showErrorDialog("externalNotFound");
+			}
+			return true;
+		}
+	}
+
 	protected abstract ZLApplication createApplication(ZLFile file);
 
 	private static final String REQUESTED_ORIENTATION_KEY = "org.geometerplus.zlibrary.ui.android.library.androidActiviy.RequestedOrientation";
 	private static final String ORIENTATION_CHANGE_COUNTER_KEY = "org.geometerplus.zlibrary.ui.android.library.androidActiviy.ChangeCounter";
+
+	protected final FileOpener myFileOpener = new FileOpener(this);
 
 	private void setScreenBrightnessAuto() {
 		final WindowManager.LayoutParams attrs = getWindow().getAttributes();
@@ -101,9 +179,9 @@ public abstract class ZLAndroidActivity extends Activity implements ZLApplicatio
 		if (androidApplication.myMainWindow == null) {
 			final ZLApplication application = createApplication(fileToOpen);
 			androidApplication.myMainWindow = new ZLAndroidApplicationWindow(application);
-			application.initWindow(this);
+			application.initWindow(myFileOpener);
 		} else {
-			ZLApplication.Instance().openFile(fileToOpen, this);
+			ZLApplication.Instance().openFile(fileToOpen, myFileOpener);
 		}
 		ZLApplication.Instance().getViewWidget().repaint();
 	}
@@ -190,7 +268,7 @@ public abstract class ZLAndroidActivity extends Activity implements ZLApplicatio
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		ZLApplication.Instance().openFile(fileFromIntent(intent), this);
+		ZLApplication.Instance().openFile(fileFromIntent(intent), myFileOpener);
 	}
 
 	private static ZLAndroidLibrary getLibrary() {
@@ -220,15 +298,4 @@ public abstract class ZLAndroidActivity extends Activity implements ZLApplicatio
 		}
 	};
 
-	public boolean openFile(String extension, ZLFile f, String appData) {
-		Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
-		LaunchIntent.setPackage(appData);
-		LaunchIntent.setData(Uri.parse("file://" + f.getPath()));
-		if (BigMimeTypeMap.getType(extension) != null) {
-			LaunchIntent.setDataAndType(Uri.parse("file://" + f.getPath()), BigMimeTypeMap.getType(extension));
-		}
-
-		startActivity(LaunchIntent);
-		return true;
-	}
 }

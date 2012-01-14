@@ -26,7 +26,10 @@ import org.geometerplus.fbreader.formats.Formats;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 
 import android.content.Context;
-import android.preference.EditTextPreference;
+import android.preference.*;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import android.util.Log;
 
@@ -38,16 +41,45 @@ class AddFormatPreference extends EditTextPreference {
 
 		myScreen = scr;
 
-		setTitle("Add file format");
+		final String title = ZLResource.resource("dialog")
+			.getResource("Preferences")
+			.getResource("formatManaging")
+			.getResource("addNewFormat")
+			.getValue();
+		setTitle(title);
 		setOrder(100500);
 		getEditText().setSingleLine();
+	}
+
+	private void showErrorDialog(final String errName) {
+		((Activity)getContext()).runOnUiThread(new Runnable() {
+			public void run() {
+				final String title = ZLResource.resource("errorMessage").getResource(errName).getValue();
+				new AlertDialog.Builder(((Activity)getContext()))
+					.setTitle(title)
+					.setIcon(0)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+						}
+					})
+					.create().show();
+				}
+		});
 	}
 
 	@Override
 	protected void onDialogClosed(boolean result) {
 		if (result) {
 			if (Formats.addFormat(getEditText().getText().toString())) {
-				myScreen.addFormatOption(Formats.extensionOption(getEditText().getText().toString()), false);
+				FormatPreference newPref = (FormatPreference)myScreen.addFormatOption(Formats.extensionOption(getEditText().getText().toString()), false);
+				if (!newPref.runIfNotEmpty()) {
+					showErrorDialog("appNotFound");
+
+					myScreen.removePreference(newPref);
+					Formats.removeFormat(getEditText().getText().toString());
+				}
+			} else {
+				showErrorDialog("invalidFormat");
 			}
 		}
 		super.onDialogClosed(result);

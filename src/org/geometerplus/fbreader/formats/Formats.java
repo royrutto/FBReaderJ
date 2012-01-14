@@ -29,9 +29,10 @@ public abstract class Formats {
 	public static final int EXTERNAL = 1;
 	public static final int UNDEFINED = 2;
 
-	private static String NATIVE_FORMATS = "epub;oeb;fb2;mobi;prc";
+	private static String NATIVE_FORMATS = "epub;oeb;fb2;mobi";
 
 	public static String extensionToOption(String extension) {
+		extension = extension.toLowerCase();
 		return "FORMAT_" + extension;
 	}
 
@@ -59,11 +60,13 @@ public abstract class Formats {
 		if (extension.equals("")) return false;
 		if (extension.equals("opf")) return false;
 		if (extension.contains(";")) return false;
+		if (extension.contains(" ")) return false;
 		if (extension.contains(".")) return false;
 		return true;
 	}
 
 	public static boolean addFormat(String extension) {
+		extension = extension.toLowerCase();
 		if (!isValid(extension)) {
 			return false;
 		}
@@ -81,15 +84,30 @@ public abstract class Formats {
 	}
 
 	public static void removeFormat(String extension) {
+		extension = extension.toLowerCase();
 		ZLStringOption formats = new ZLStringOption("Formats", "ExternalFormats", "");
 		String s = formats.getValue();
-		s = s.replace(";" + extension, "");
-		s = s.replace(extension + ";", "");
-		s = s.replace(extension, "");
+		if (s.equals(extension)) {
+			s = "";
+			formats.setValue(s);
+			return;
+		}
+		if (s.startsWith(extension + ";")) {
+			s = s.substring(extension.length() + 1);
+			formats.setValue(s);
+			return;
+		}
+		if (s.endsWith(";" + extension)) {
+			s = s.substring(0, s.length() - extension.length() - 1);
+			formats.setValue(s);
+			return;
+		}
+		s = s.replace(";" + extension + ";", ";");
 		formats.setValue(s);
 	}
 
 	public static ZLStringOption extensionOption(String extension) {
+		extension = extension.toLowerCase();
 		if (getNativeFormats().contains(extension)) {
 			return new ZLStringOption("Formats", extensionToOption(extension), "org.geometerplus.zlibrary.ui.android");
 		} else {
@@ -99,6 +117,7 @@ public abstract class Formats {
 	}
 
 	public static int getStatus(String extension) {
+		extension = extension.toLowerCase();
 		String pkg = extensionOption(extension).getValue();
 		if (pkg.equals("org.geometerplus.zlibrary.ui.android")) return NATIVE;
 		if (pkg.equals("")) return UNDEFINED;

@@ -223,6 +223,7 @@ public final class FBReaderApp extends ZLApplication {
 		if (book != null) {
 			BookModel PreModel = BookModel.createModel(book, efo);
 			if (PreModel != null && !PreModel.Plugin.isNative()) {
+				Library.addBookToRecentList(book);
 				return; /*  external opening  */
 			}
 			onViewChanged();

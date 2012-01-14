@@ -33,6 +33,7 @@ import java.util.*;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
 import org.geometerplus.fbreader.formats.Formats;
 import org.geometerplus.fbreader.formats.BigMimeTypeMap;
+import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.android.fbreader.preferences.ZLPreferenceActivity.Screen;
 
 import android.app.AlertDialog;
@@ -55,16 +56,22 @@ class FormatPreference extends ListPreference {
 		myFormat = formatName;
 		myIsNative = isNative;
 //		fillList();
+		final String emptySummary = ZLResource.resource("dialog")
+			.getResource("Preferences")
+			.getResource("formatManaging")
+			.getResource("appNotSet")
+			.getValue();
 		if (myOption.getValue() != "") {
 			final PackageManager pm = getContext().getPackageManager();
 			try {
 				ApplicationInfo info = pm.getApplicationInfo(myOption.getValue(), 0);
 				setSummary(info.loadLabel(pm).toString());
 			} catch (PackageManager.NameNotFoundException e) {
-				//TODO
+				myOption.setValue("");
+				setSummary(emptySummary);
 			}
 		} else {
-			setSummary("Application is not chosen");
+			setSummary(emptySummary);
 		}
 	}
 
@@ -73,7 +80,16 @@ class FormatPreference extends ListPreference {
 		super.onClick();
 	}
 
-	protected void fillList() {
+	public boolean runIfNotEmpty() {
+		if (fillList()) {
+			super.onClick();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	protected boolean fillList() {
 		final PackageManager pm = getContext().getPackageManager();
 		ArrayList<String> names = new ArrayList<String>();
 		ArrayList<String> values = new ArrayList<String>();
@@ -90,16 +106,23 @@ class FormatPreference extends ListPreference {
 				myPaths.add(packageInfo.activityInfo.applicationInfo.packageName);
 			}
 		}
+		boolean foundSomething = (values.size() > 0);
 		myPaths.clear();
 		if (!myIsNative) {
+			final String deleteItem = ZLResource.resource("dialog")
+				.getResource("Preferences")
+				.getResource("formatManaging")
+				.getResource("deleteFormat")
+				.getValue();
 			values.add("DELETE");
-			names.add("Delete this format");
+			names.add(deleteItem);
 		}
 		setEntries(names.toArray(new String[names.size()]));
 		setEntryValues(values.toArray(new String[values.size()]));
 		if (myOption.getValue() != "") {
 			setValue(myOption.getValue());
 		}
+		return foundSomething;
 
 	}
 

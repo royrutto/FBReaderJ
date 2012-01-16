@@ -42,7 +42,7 @@ import org.geometerplus.zlibrary.ui.android.library.ZLAndroidLibrary;
 import org.geometerplus.fbreader.fbreader.ActionCode;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.fbreader.bookmodel.BookModel;
-import org.geometerplus.fbreader.library.Book;
+import org.geometerplus.fbreader.library.*;
 import org.geometerplus.fbreader.tips.TipsManager;
 
 import org.geometerplus.android.fbreader.library.SQLiteBooksDatabase;
@@ -349,7 +349,7 @@ public final class FBReader extends ZLAndroidActivity {
 				break;
 			}
 			case CANCEL_CODE:
-				fbreader.runCancelAction(resultCode - 1, myFileOpener);
+				fbreader.runCancelAction(resultCode - 1);
 				break;
 		}
 	}
@@ -418,5 +418,11 @@ public final class FBReader extends ZLAndroidActivity {
 		application.myMainWindow.refreshMenu();
 
 		return true;
+	}
+
+	protected void processFile(ZLFile f) {
+		final FBReaderApp fbreader = (FBReaderApp)FBReaderApp.Instance();
+		Book b = fbreader.createBookForFile(f);
+		Library.addBookToRecentList(b);
 	}
 }

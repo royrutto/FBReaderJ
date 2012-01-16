@@ -25,13 +25,19 @@ import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
-import org.geometerplus.zlibrary.core.application.ZLApplication;
-
 public class CustomPlugin extends FormatPlugin {
 	private String myFormat;
 
 	CustomPlugin(String extension) {
 		myFormat = extension;
+	}
+
+	public String getExtension() {
+		return myFormat;
+	}
+
+	public String getPackage() {
+		return Formats.extensionOption(myFormat).getValue();
 	}
 
 	@Override
@@ -43,15 +49,15 @@ public class CustomPlugin extends FormatPlugin {
 	public boolean acceptsFile(ZLFile file) {
 		return myFormat.equals(file.getExtension());
 	}
-	
+
 	@Override
 	public boolean readMetaInfo(Book book) {
 		return true;
 	}
-	
+
 	@Override
-	public boolean readModel(BookModel model, ZLApplication.ExternalFileOpener efo) {
-		return efo.openFile(myFormat, model.Book.File, Formats.extensionOption(myFormat).getValue());
+	public boolean readModel(BookModel model) {
+		return false;
 	}
 
 	@Override

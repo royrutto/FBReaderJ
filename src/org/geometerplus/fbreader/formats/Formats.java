@@ -29,7 +29,7 @@ public abstract class Formats {
 	public static final int EXTERNAL = 1;
 	public static final int UNDEFINED = 2;
 
-	private static String NATIVE_FORMATS = "epub;oeb;fb2;mobi";
+	private static String NATIVE_FORMATS = "epub;fb2;mobi;oeb";
 
 	public static String extensionToOption(String extension) {
 		extension = extension.toLowerCase();

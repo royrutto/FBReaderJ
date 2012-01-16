@@ -31,7 +31,6 @@ import android.content.*;
 import org.geometerplus.zlibrary.core.util.ZLMiscUtil;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
-import org.geometerplus.zlibrary.ui.android.library.ZLAndroidActivity;
 
 import org.geometerplus.zlibrary.ui.android.R;
 
@@ -53,8 +52,6 @@ public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuIte
 	private ListView myThisBookView;
 	private ListView myAllBooksView;
 	private ListView mySearchResultsView;
-
-	private final ZLAndroidActivity.FileOpener myFileOpener = new ZLAndroidActivity.FileOpener(this);
 
 	private final ZLResource myResource = ZLResource.resource("bookmarksView");
 	private final ZLStringOption myBookmarkSearchPatternOption =
@@ -230,7 +227,7 @@ public class BookmarksActivity extends TabActivity implements MenuItem.OnMenuIte
 			final Book book = Book.getById(bookId);
 			if (book != null) {
 				finish();
-				fbreader.openBook(book, bookmark, myFileOpener);
+				fbreader.openBook(book, bookmark);
 			} else {
 				UIUtil.showErrorMessage(this, "cannotOpenBook");
 			}

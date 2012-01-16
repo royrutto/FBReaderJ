@@ -44,11 +44,11 @@ import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.ui.android.R;
 import org.geometerplus.zlibrary.ui.android.application.ZLAndroidApplicationWindow;
 
-import org.geometerplus.fbreader.formats.BigMimeTypeMap;
+import org.geometerplus.fbreader.formats.*;
 
 public abstract class ZLAndroidActivity extends Activity {
 
-	public static class FileOpener implements ZLApplication.ExternalFileOpener {
+	public static class FileOpener {
 		private final Activity myActivity;
 
 		public FileOpener(Activity activity) {
@@ -179,9 +179,14 @@ public abstract class ZLAndroidActivity extends Activity {
 		if (androidApplication.myMainWindow == null) {
 			final ZLApplication application = createApplication(fileToOpen);
 			androidApplication.myMainWindow = new ZLAndroidApplicationWindow(application);
-			application.initWindow(myFileOpener);
+			application.initWindow();
 		} else {
-			ZLApplication.Instance().openFile(fileToOpen, myFileOpener);
+			if (fileToOpen != null) {
+				FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
+				if (plugin.isNative()) {
+					ZLApplication.Instance().openFile(fileToOpen);
+				}
+			}
 		}
 		ZLApplication.Instance().getViewWidget().repaint();
 	}
@@ -265,10 +270,20 @@ public abstract class ZLAndroidActivity extends Activity {
 		super.onLowMemory();
 	}
 
+	protected abstract void processFile(ZLFile f);
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		ZLApplication.Instance().openFile(fileFromIntent(intent), myFileOpener);
+		ZLFile fileToOpen = fileFromIntent(intent);
+		FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
+		if (plugin.isNative()) {
+			ZLApplication.Instance().openFile(fileToOpen);
+		} else {
+			CustomPlugin p = (CustomPlugin)plugin;
+			processFile(fileToOpen);
+			myFileOpener.openFile(p.getExtension(), fileToOpen, p.getPackage());
+		}
 	}
 
 	private static ZLAndroidLibrary getLibrary() {

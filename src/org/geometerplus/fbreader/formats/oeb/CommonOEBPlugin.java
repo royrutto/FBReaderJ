@@ -66,7 +66,7 @@ public class CommonOEBPlugin extends FormatPlugin {
 	}
 	
 	@Override
-	public boolean readModel(BookModel model, ZLApplication.ExternalFileOpener efo) {
+	public boolean readModel(BookModel model) {
 		model.Book.File.setCached(true);
 		final ZLFile opfFile = getOpfFile(model.Book.File);
 		return (opfFile != null) ? new OEBBookReader(model).readBook(opfFile) : false;

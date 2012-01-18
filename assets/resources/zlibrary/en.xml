@@ -23,6 +23,7 @@
 			<node name="invalidURL" value="Invalid URL" />
 			<node name="hostCantBeReached" value="Host %s cannot be reached" />
 			<node name="connectionRefused" value="Connection was refused by %s" />
+			<node name="circularRedirection" value="Circular Redirection" />
 		</node>
 	</node>
 	<node name="color">

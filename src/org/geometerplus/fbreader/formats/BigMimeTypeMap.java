@@ -24,14 +24,18 @@ import org.geometerplus.zlibrary.core.xml.*;
 import org.geometerplus.zlibrary.core.filesystem.*;
 
 public abstract class BigMimeTypeMap {
-	private static HashMap<String, String> ourMap = new HashMap<String, String>();
+	private static HashMap<String, HashSet<String> > ourMap = new HashMap<String, HashSet<String> >();
 
-	public static String getType(String ext) {
+	public static HashSet<String> getTypes(String ext) {
 		return ourMap.get(ext);
 	}
 
 	private static void setType(String ext, String type) {
-		ourMap.put(ext, type);
+		if (ourMap.containsKey(ext)) {
+			ourMap.get(ext).add(type);
+		} else {
+			ourMap.put(ext, new HashSet(Collections.singleton(type)));
+		}
 	}
 
 	private static class MimeTypeReader extends ZLXMLReaderAdapter {
@@ -44,6 +48,7 @@ public abstract class BigMimeTypeMap {
 				if (ext != null && type != null) {
 					BigMimeTypeMap.setType(ext, type);
 				}
+				BigMimeTypeMap.setType(ext, "application/" + ext);
 			}
 			return false;
 		}

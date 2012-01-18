@@ -42,6 +42,8 @@ import org.geometerplus.zlibrary.core.util.ZLMiscUtil;
 import org.geometerplus.zlibrary.core.util.ZLNetworkUtil;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
+import android.util.Log;
+
 public class ZLNetworkManager {
 	private static ZLNetworkManager ourManager;
 
@@ -275,6 +277,75 @@ public class ZLNetworkManager {
 	public CredentialsCreator getCredentialsCreator() {
 		return myCredentialsCreator;
 	}
+
+	public String getFileNameOrUrl(String Url) {
+		return getFileNameOrUrl(Url, new ArrayList<String>());
+	}
+
+	private String getFileNameOrUrl(String Url, List<String> visited)/* throws ZLNetworkException*/ {//TODO: todo
+//Log.d("fbreader", "start checking " + Url);
+		DefaultHttpClient httpClient = null;
+		HttpEntity entity = null;
+		try {
+			final HttpContext httpContext = new BasicHttpContext();
+			httpContext.setAttribute(ClientContext.COOKIE_STORE, myCookieStore);
+
+			final HttpParams params = new BasicHttpParams();
+			HttpConnectionParams.setSoTimeout(params, 30000);
+			HttpConnectionParams.setConnectionTimeout(params, 15000);
+			httpClient = new DefaultHttpClient(params);
+			final HttpRequestBase httpRequest = new HttpHead(Url);
+
+			httpRequest.setHeader("User-Agent", ZLNetworkUtil.getUserAgent());
+			httpRequest.setHeader("Accept-Encoding", "gzip");
+			httpRequest.setHeader("Accept-Language", Locale.getDefault().getLanguage());
+
+			httpClient.setCredentialsProvider(new MyCredentialsProvider(httpRequest, true));
+			HttpResponse response = null;
+			IOException lastException = null;
+			for (int retryCounter = 0; retryCounter < 3 && entity == null; ++retryCounter) {
+				try {
+					response = httpClient.execute(httpRequest, httpContext);
+					entity = response.getEntity();
+					lastException = null;
+					if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+						final AuthState state = (AuthState)httpContext.getAttribute(ClientContext.TARGET_AUTH_STATE);
+						if (state != null) {
+							final AuthScopeKey key = new AuthScopeKey(state.getAuthScope());
+							if (myCredentialsCreator.removeCredentials(key)) {
+								entity = null;
+							}
+						}
+					}
+				} catch (IOException e) {
+					lastException = e;
+				}
+			}
+			if (lastException != null) {
+				throw lastException;
+			}
+			final int responseCode = response.getStatusLine().getStatusCode();
+
+			for (Header h : response.getAllHeaders()) {
+				Log.d("fbreader", h.getName());
+				Log.d("fbreader", h.getValue());
+			}
+		} catch (IOException e) {
+//			e.printStackTrace();
+//			final String code;
+//			if (e instanceof UnknownHostException) {
+//				code = ZLNetworkException.ERROR_RESOLVE_HOST;
+//			} else {
+//				code = ZLNetworkException.ERROR_CONNECT_TO_HOST;
+//			}
+//			throw new ZLNetworkException(code, ZLNetworkUtil.hostFromUrl(request.URL), e);
+		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new ZLNetworkException(true, e.getMessage(), e);
+		}
+		return "";
+	}
+
 
 	public void perform(ZLNetworkRequest request) throws ZLNetworkException {
 		boolean success = false;

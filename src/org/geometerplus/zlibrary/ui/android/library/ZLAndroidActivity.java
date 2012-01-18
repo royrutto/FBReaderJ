@@ -22,6 +22,7 @@ package org.geometerplus.zlibrary.ui.android.library;
 import java.lang.reflect.*;
 
 import java.io.*;
+import java.util.*;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -71,7 +72,7 @@ public abstract class ZLAndroidActivity extends Activity {
 			});
 		}
 
-		public boolean openFile(String extension, ZLFile f, String appData) {
+		public void openFile(String extension, ZLFile f, String appData) {
 			Uri uri = null;
 			if (f.getPath().contains(":")) {
 
@@ -96,7 +97,7 @@ public abstract class ZLAndroidActivity extends Activity {
 					uri = Uri.fromFile(tmpfile);
 				} catch (IOException e) {
 					showErrorDialog("unzipFailed");
-					return true;
+					return;
 				}
 			} else {
 				uri = Uri.parse("file://" + f.getPath());
@@ -104,15 +105,24 @@ public abstract class ZLAndroidActivity extends Activity {
 			Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
 			LaunchIntent.setPackage(appData);
 			LaunchIntent.setData(uri);
-			if (BigMimeTypeMap.getType(extension) != null) {
-				LaunchIntent.setDataAndType(uri, BigMimeTypeMap.getType(extension));
+			if (BigMimeTypeMap.getTypes(extension) != null) {
+				for (String type : BigMimeTypeMap.getTypes(extension)) {
+					LaunchIntent.setDataAndType(uri, type);
+					try {
+						myActivity.startActivity(LaunchIntent);
+						return;
+					} catch (ActivityNotFoundException e) {
+					}
+				}
+				showErrorDialog("externalNotFound");
+				return;
 			}
 			try {
 				myActivity.startActivity(LaunchIntent);
 			} catch (ActivityNotFoundException e) {
 				showErrorDialog("externalNotFound");
 			}
-			return true;
+			return;
 		}
 	}
 
@@ -276,6 +286,15 @@ public abstract class ZLAndroidActivity extends Activity {
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		ZLFile fileToOpen = fileFromIntent(intent);
+		if (fileToOpen.isArchive() && fileToOpen.getPath().endsWith(".fb2.zip")) {
+			final List<ZLFile> children = fileToOpen.children();
+			if (children.size() == 1) {
+				final ZLFile child = children.get(0);
+				if (child.getPath().endsWith(".fb2")) {
+					fileToOpen = child;
+				}
+			} 
+		}
 		FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
 		if (plugin.isNative()) {
 			ZLApplication.Instance().openFile(fileToOpen);

@@ -95,15 +95,24 @@ class FormatPreference extends ListPreference {
 		ArrayList<String> values = new ArrayList<String>();
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setData(Uri.parse("file:///sdcard/fgsfds." + myFormat));
-		final String mimeType = BigMimeTypeMap.getType(myFormat);
-		if (mimeType != null) {
-			intent.setDataAndType(Uri.parse("file:///sdcard/fgsfds." + myFormat), mimeType);
-		}
-		for (ResolveInfo packageInfo : pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)) {
-			if (!myPaths.contains(packageInfo.activityInfo.applicationInfo.packageName)) {
-				values.add(packageInfo.activityInfo.applicationInfo.packageName);
-				names.add(packageInfo.activityInfo.applicationInfo.loadLabel(pm).toString());
-				myPaths.add(packageInfo.activityInfo.applicationInfo.packageName);
+		if (BigMimeTypeMap.getTypes(myFormat) != null) {
+			for (String type : BigMimeTypeMap.getTypes(myFormat)) {
+				intent.setDataAndType(Uri.parse("file:///sdcard/fgsfds." + myFormat), type);
+				for (ResolveInfo packageInfo : pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)) {
+					if (!myPaths.contains(packageInfo.activityInfo.applicationInfo.packageName)) {
+						values.add(packageInfo.activityInfo.applicationInfo.packageName);
+						names.add(packageInfo.activityInfo.applicationInfo.loadLabel(pm).toString());
+						myPaths.add(packageInfo.activityInfo.applicationInfo.packageName);
+					}
+				}
+			}
+		} else {
+			for (ResolveInfo packageInfo : pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)) {
+				if (!myPaths.contains(packageInfo.activityInfo.applicationInfo.packageName)) {
+					values.add(packageInfo.activityInfo.applicationInfo.packageName);
+					names.add(packageInfo.activityInfo.applicationInfo.loadLabel(pm).toString());
+					myPaths.add(packageInfo.activityInfo.applicationInfo.packageName);
+				}
 			}
 		}
 		boolean foundSomething = (values.size() > 0);

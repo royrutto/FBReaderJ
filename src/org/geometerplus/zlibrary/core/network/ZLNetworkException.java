@@ -31,6 +31,7 @@ public class ZLNetworkException extends Exception {
 	public static final String ERROR_UNSUPPORTED_PROTOCOL = "unsupportedProtocol";
 	public static final String ERROR_INVALID_URL = "invalidURL";
 	public static final String ERROR_AUTHENTICATION_FAILED = "authenticationFailed";
+	public static final String ERROR_CIRCULAR_REDIRECTION = "circularRedirection";
 
 	// Messages with one parameter:
 	public static final String ERROR_SOMETHING_WRONG = "somethingWrongMessage";

@@ -27,8 +27,6 @@ import org.geometerplus.fbreader.formats.FormatPlugin;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
 
-import org.geometerplus.zlibrary.core.application.ZLApplication;
-
 public class HtmlPlugin extends FormatPlugin {
 	
 	@Override
@@ -43,7 +41,7 @@ public class HtmlPlugin extends FormatPlugin {
 	}
 
 	@Override
-	public boolean readModel(BookModel model, ZLApplication.ExternalFileOpener efo) {
+	public boolean readModel(BookModel model) {
 		try {
 			return new HtmlReader(model).readBook();
 		} catch (IOException e) {

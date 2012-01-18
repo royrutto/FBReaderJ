@@ -22,6 +22,7 @@ package org.geometerplus.zlibrary.ui.android.library;
 import java.lang.reflect.*;
 
 import java.io.*;
+import java.util.*;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -44,11 +45,14 @@ import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.ui.android.R;
 import org.geometerplus.zlibrary.ui.android.application.ZLAndroidApplicationWindow;
 
-import org.geometerplus.fbreader.formats.BigMimeTypeMap;
+import org.geometerplus.fbreader.formats.*;
+import org.geometerplus.fbreader.Paths;
+
+import android.util.Log;
 
 public abstract class ZLAndroidActivity extends Activity {
 
-	public static class FileOpener implements ZLApplication.ExternalFileOpener {
+	public static class FileOpener {
 		private final Activity myActivity;
 
 		public FileOpener(Activity activity) {
@@ -71,7 +75,7 @@ public abstract class ZLAndroidActivity extends Activity {
 			});
 		}
 
-		public boolean openFile(String extension, ZLFile f, String appData) {
+		public void openFile(String extension, ZLFile f, String appData) {
 			Uri uri = null;
 			if (f.getPath().contains(":")) {
 
@@ -79,10 +83,13 @@ public abstract class ZLAndroidActivity extends Activity {
 					String filepath = f.getPath();
 					int p1 = filepath.lastIndexOf(":");
 					String filename = filepath.substring(p1 + 1);
-					p1 = filename.lastIndexOf(".");
-					filename = filename.substring(0, p1);
-					File tmpfile = File.createTempFile(filename, "." + extension);
-					OutputStream out = new FileOutputStream(tmpfile);
+//					p1 = filename.lastIndexOf(".");
+//					filename = filename.substring(0, p1);
+//					File tmpfile = File.createTempFile(filename, "." + extension);
+					final File dirFile = new File(Paths.TempDirectoryOption().getValue());
+					dirFile.mkdirs();
+					String path = Paths.TempDirectoryOption().getValue() + "/" + filename;
+					OutputStream out = new FileOutputStream(Paths.TempDirectoryOption().getValue() + "/" + filename);
 
 					int read = 0;
 					byte[] bytes = new byte[1024];
@@ -93,10 +100,10 @@ public abstract class ZLAndroidActivity extends Activity {
 					}
 					out.flush();
 					out.close();
-					uri = Uri.fromFile(tmpfile);
+					uri = Uri.parse("file://" + path);
 				} catch (IOException e) {
 					showErrorDialog("unzipFailed");
-					return true;
+					return;
 				}
 			} else {
 				uri = Uri.parse("file://" + f.getPath());
@@ -104,15 +111,24 @@ public abstract class ZLAndroidActivity extends Activity {
 			Intent LaunchIntent = new Intent(Intent.ACTION_VIEW);
 			LaunchIntent.setPackage(appData);
 			LaunchIntent.setData(uri);
-			if (BigMimeTypeMap.getType(extension) != null) {
-				LaunchIntent.setDataAndType(uri, BigMimeTypeMap.getType(extension));
+			if (BigMimeTypeMap.getTypes(extension) != null) {
+				for (String type : BigMimeTypeMap.getTypes(extension)) {
+					LaunchIntent.setDataAndType(uri, type);
+					try {
+						myActivity.startActivity(LaunchIntent);
+						return;
+					} catch (ActivityNotFoundException e) {
+					}
+				}
+				showErrorDialog("externalNotFound");
+				return;
 			}
 			try {
 				myActivity.startActivity(LaunchIntent);
 			} catch (ActivityNotFoundException e) {
 				showErrorDialog("externalNotFound");
 			}
-			return true;
+			return;
 		}
 	}
 
@@ -179,9 +195,14 @@ public abstract class ZLAndroidActivity extends Activity {
 		if (androidApplication.myMainWindow == null) {
 			final ZLApplication application = createApplication(fileToOpen);
 			androidApplication.myMainWindow = new ZLAndroidApplicationWindow(application);
-			application.initWindow(myFileOpener);
+			application.initWindow();
 		} else {
-			ZLApplication.Instance().openFile(fileToOpen, myFileOpener);
+			if (fileToOpen != null) {
+				FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
+				if (plugin.isNative()) {
+					ZLApplication.Instance().openFile(fileToOpen);
+				}
+			}
 		}
 		ZLApplication.Instance().getViewWidget().repaint();
 	}
@@ -265,10 +286,29 @@ public abstract class ZLAndroidActivity extends Activity {
 		super.onLowMemory();
 	}
 
+	protected abstract void processFile(ZLFile f);
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		ZLApplication.Instance().openFile(fileFromIntent(intent), myFileOpener);
+		ZLFile fileToOpen = fileFromIntent(intent);
+		if (fileToOpen.isArchive() && fileToOpen.getPath().endsWith(".fb2.zip")) {
+			final List<ZLFile> children = fileToOpen.children();
+			if (children.size() == 1) {
+				final ZLFile child = children.get(0);
+				if (child.getPath().endsWith(".fb2")) {
+					fileToOpen = child;
+				}
+			} 
+		}
+		FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
+		if (plugin.isNative()) {
+			ZLApplication.Instance().openFile(fileToOpen);
+		} else {
+			CustomPlugin p = (CustomPlugin)plugin;
+			processFile(fileToOpen);
+			myFileOpener.openFile(p.getExtension(), fileToOpen, p.getPackage());
+		}
 	}
 
 	private static ZLAndroidLibrary getLibrary() {

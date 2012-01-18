@@ -24,12 +24,10 @@ import org.geometerplus.fbreader.library.Book;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
 
-import org.geometerplus.zlibrary.core.application.ZLApplication;
-
-public abstract class FormatPlugin {
+public abstract class FormatPlugin implements InfoReader {
 	public abstract boolean acceptsFile(ZLFile file);
 	public abstract	boolean readMetaInfo(Book book);
-	public abstract boolean readModel(BookModel model, ZLApplication.ExternalFileOpener efo);
+	public abstract boolean readModel(BookModel model);
 	public abstract ZLImage readCover(ZLFile file);
 	public abstract String readAnnotation(ZLFile file);
 

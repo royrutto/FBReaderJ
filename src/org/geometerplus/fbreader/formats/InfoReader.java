@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 Geometer Plus <contact@geometerplus.com>
+ * Copyright (C) 2007-2012 Geometer Plus <contact@geometerplus.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,14 @@
  * 02110-1301, USA.
  */
 
-package org.geometerplus.fbreader.network.urlInfo;
+package org.geometerplus.fbreader.formats;
 
-import org.geometerplus.zlibrary.core.money.Money;
+import org.geometerplus.fbreader.library.Book;
+import org.geometerplus.zlibrary.core.filesystem.ZLFile;
+import org.geometerplus.zlibrary.core.image.ZLImage;
 
-public class BookBuyUrlInfo extends BookUrlInfo {
-	private static final long serialVersionUID = 7877935250896069650L;
-
-	public final Money Price;
-
-	public BookBuyUrlInfo(Type type, String format, String url, Money price) {
-		super(type, format, url);
-		Price = price;
-	}
+public interface InfoReader {
+	boolean readMetaInfo(Book book);
+	ZLImage readCover(ZLFile file);
+	String readAnnotation(ZLFile file);
 }

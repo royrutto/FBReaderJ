@@ -32,6 +32,10 @@ import org.geometerplus.fbreader.network.NetworkBookItem;
 import org.geometerplus.fbreader.network.atom.*;
 import org.geometerplus.fbreader.network.urlInfo.*;
 
+import org.geometerplus.fbreader.formats.*;
+
+import android.util.Log;
+
 public class OPDSBookItem extends NetworkBookItem implements OPDSConstants {
 	public static OPDSBookItem create(INetworkLink link, String url) {
 		if (link == null || url == null) {
@@ -152,8 +156,11 @@ public class OPDSBookItem extends NetworkBookItem implements OPDSConstants {
 			} else if (referenceType == UrlInfo.Type.TOC) {
 				urls.addInfo(new UrlInfo(referenceType, href));
 			} else if (referenceType != null) {
-				final int format = formatByMimeType(type);
+				final String format = formatByMimeType(type);
+Log.d("fbreader", type.Name);
 				if (format != BookUrlInfo.Format.NONE) {
+Log.d("fbreader", format);
+Log.d("fbreader", href);
 					urls.addInfo(new BookUrlInfo(referenceType, format, href));
 				}
 			}
@@ -193,7 +200,7 @@ public class OPDSBookItem extends NetworkBookItem implements OPDSConstants {
 	) {
 		boolean added = false;
 		for (String mime : opdsLink.Formats) {
-			final int format = formatByMimeType(MimeType.get(mime));
+			final String format = formatByMimeType(MimeType.get(mime));
 			if (format != BookUrlInfo.Format.NONE) {
 				urls.addInfo(new BookBuyUrlInfo(type, format, href, price));
 				added = true;
@@ -204,13 +211,15 @@ public class OPDSBookItem extends NetworkBookItem implements OPDSConstants {
 		}
 	}
 
-	static int formatByMimeType(MimeType type) {
+	static String formatByMimeType(MimeType type) {
 		if (MimeType.APP_FB2ZIP.equals(type)) {
 			return BookUrlInfo.Format.FB2_ZIP;
 		} else if (MimeType.APP_EPUB.equals(type)) {
 			return BookUrlInfo.Format.EPUB;
 		} else if (MimeType.APP_MOBI.equals(type)) {
 			return BookUrlInfo.Format.MOBIPOCKET;
+		} else if (PluginCollection.Instance().ExtForMimeType(type.Name) != null) {
+			return "." + PluginCollection.Instance().ExtForMimeType(type.Name);
 		}
 		return BookUrlInfo.Format.NONE;
 	}

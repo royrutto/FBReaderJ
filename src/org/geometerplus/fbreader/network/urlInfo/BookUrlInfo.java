@@ -30,22 +30,30 @@ public class BookUrlInfo extends UrlInfo {
 	private static final long serialVersionUID = -893514485257788221L;
 
 	public interface Format {
-		int NONE = 0;
-		int MOBIPOCKET = 1;
-		int FB2_ZIP = 2;
-		int EPUB = 3;
+		String NONE = null;
+		String MOBIPOCKET = ".mobi";
+		String FB2_ZIP = ".fb2.zip";
+		String EPUB = ".epub";
 	}
 
-	public final int BookFormat;
+	public static int getPriority(String type) {
+		if (type == Format.NONE) return -1;
+		if (type == Format.MOBIPOCKET) return 1;
+		if (type == Format.FB2_ZIP) return 2;
+		if (type == Format.EPUB) return 3;
+		return 0;
+	}
 
-	public BookUrlInfo(Type type, int format, String url) {
+	public final String BookFormat;
+
+	public BookUrlInfo(Type type, String format, String url) {
 		super(type, url);
 		BookFormat = format;
 	}
 
 	private static final String TOESCAPE = "<>:\"|?*\\";
 
-	public static String makeBookFileName(String url, int format, Type resolvedReferenceType) {
+	public static String makeBookFileName(String url, String format, Type resolvedReferenceType) {
 		URI uri;
 		try {
 			uri = new URI(url);
@@ -85,18 +93,21 @@ public class BookUrlInfo extends UrlInfo {
 			++index;
 		}
 
-		String ext = null;
-		switch (format) {
-			case Format.EPUB:
-				ext = ".epub";
-				break;
-			case Format.MOBIPOCKET:
-				ext = ".mobi";
-				break;
-			case Format.FB2_ZIP:
-				ext = ".fb2.zip";
-				break;
-		}
+		String ext = format;
+//		switch (format) {
+//			case Format.EPUB:
+//				ext = ".epub";
+//				break;
+//			case Format.MOBIPOCKET:
+//				ext = ".mobi";
+//				break;
+//			case Format.FB2_ZIP:
+//				ext = ".fb2.zip";
+//				break;
+//			case Format.CUSTOM:
+//				ext = ".fb2.zip";
+//				break;
+//		}
 
 		if (ext == null) {
 			int j = path.indexOf(".", nameIndex); // using not lastIndexOf to preserve extensions like `.fb2.zip`

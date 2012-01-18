@@ -25,13 +25,39 @@ import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
-import org.geometerplus.zlibrary.core.application.ZLApplication;
-
 public class CustomPlugin extends FormatPlugin {
+
+	private static class DefaultInfoReader implements InfoReader {
+		public boolean readMetaInfo(Book book) {
+			return true;
+		}
+		public ZLImage readCover(ZLFile file) {
+			return null;
+		}
+		public String readAnnotation(ZLFile file) {
+			return null;
+		}
+	}
+
+	private InfoReader myInfoReader;
 	private String myFormat;
 
 	CustomPlugin(String extension) {
 		myFormat = extension;
+		myInfoReader = new DefaultInfoReader();
+	}
+
+	CustomPlugin(String extension, InfoReader ir) {
+		myFormat = extension;
+		myInfoReader = ir;
+	}
+
+	public String getExtension() {
+		return myFormat;
+	}
+
+	public String getPackage() {
+		return Formats.extensionOption(myFormat).getValue();
 	}
 
 	@Override
@@ -43,24 +69,24 @@ public class CustomPlugin extends FormatPlugin {
 	public boolean acceptsFile(ZLFile file) {
 		return myFormat.equals(file.getExtension());
 	}
-	
+
 	@Override
 	public boolean readMetaInfo(Book book) {
-		return true;
+		return myInfoReader.readMetaInfo(book);
 	}
-	
+
 	@Override
-	public boolean readModel(BookModel model, ZLApplication.ExternalFileOpener efo) {
-		return efo.openFile(myFormat, model.Book.File, Formats.extensionOption(myFormat).getValue());
+	public boolean readModel(BookModel model) {
+		return false;
 	}
 
 	@Override
 	public ZLImage readCover(ZLFile file) {
-		return null;
+		return myInfoReader.readCover(file);
 	}
 
 	@Override
 	public String readAnnotation(ZLFile file) {
-		return null;
+		return myInfoReader.readAnnotation(file);
 	}
 }

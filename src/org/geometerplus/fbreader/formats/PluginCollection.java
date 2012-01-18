@@ -72,7 +72,11 @@ public class PluginCollection {
 
 	private FormatPlugin getOrCreateCustomPlugin(String extension) {
 		if (!myExternalPlugins.containsKey(extension)) {
-			myExternalPlugins.put(extension, new CustomPlugin(extension));
+			if (myNativePlugins.containsKey(extension)) {
+				myExternalPlugins.put(extension, new CustomPlugin(extension, myNativePlugins.get(extension)));
+			} else {
+				myExternalPlugins.put(extension, new CustomPlugin(extension));
+			}
 		}
 		return myExternalPlugins.get(extension);
 	}
@@ -82,6 +86,9 @@ public class PluginCollection {
 			return myNativePlugins.get("fb2"); //read help always natively
 		}
 		String extension = file.getExtension();
+		if (file.getShortName().endsWith("fb2.zip")) {
+			extension = "fb2";
+		}
 		switch (Formats.getStatus(extension)) {
 			case Formats.NATIVE:
 				return myNativePlugins.get(extension);
@@ -95,6 +102,19 @@ public class PluginCollection {
 	public boolean acceptsBookPath(String path) {
 		String extension = path.substring(path.lastIndexOf('.') + 1);
 		return Formats.getStatus(extension) != Formats.UNDEFINED;
+	}
+
+	public String ExtForMimeType(String type) {
+		for (String ext : Formats.getExternalFormats()) {
+			if (BigMimeTypeMap.getTypes(ext) != null) {
+				for (String mtype : BigMimeTypeMap.getTypes(ext)) {
+					if (mtype.equals(type)) {
+						return ext;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 }

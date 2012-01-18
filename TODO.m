@@ -1,0 +1,3 @@
+-correct filenames (not download.fb2.zip)
+-http 206
+-temp dir

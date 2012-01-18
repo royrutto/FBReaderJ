@@ -72,7 +72,11 @@ public class PluginCollection {
 
 	private FormatPlugin getOrCreateCustomPlugin(String extension) {
 		if (!myExternalPlugins.containsKey(extension)) {
-			myExternalPlugins.put(extension, new CustomPlugin(extension));
+			if (myNativePlugins.containsKey(extension)) {
+				myExternalPlugins.put(extension, new CustomPlugin(extension, myNativePlugins.get(extension)));
+			} else {
+				myExternalPlugins.put(extension, new CustomPlugin(extension));
+			}
 		}
 		return myExternalPlugins.get(extension);
 	}

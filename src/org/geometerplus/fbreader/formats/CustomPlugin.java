@@ -26,10 +26,30 @@ import org.geometerplus.zlibrary.core.image.ZLImage;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
 public class CustomPlugin extends FormatPlugin {
+
+	private static class DefaultInfoReader implements InfoReader {
+		public boolean readMetaInfo(Book book) {
+			return true;
+		}
+		public ZLImage readCover(ZLFile file) {
+			return null;
+		}
+		public String readAnnotation(ZLFile file) {
+			return null;
+		}
+	}
+
+	private InfoReader myInfoReader;
 	private String myFormat;
 
 	CustomPlugin(String extension) {
 		myFormat = extension;
+		myInfoReader = new DefaultInfoReader();
+	}
+
+	CustomPlugin(String extension, InfoReader ir) {
+		myFormat = extension;
+		myInfoReader = ir;
 	}
 
 	public String getExtension() {
@@ -52,7 +72,7 @@ public class CustomPlugin extends FormatPlugin {
 
 	@Override
 	public boolean readMetaInfo(Book book) {
-		return true;
+		return myInfoReader.readMetaInfo(book);
 	}
 
 	@Override
@@ -62,11 +82,11 @@ public class CustomPlugin extends FormatPlugin {
 
 	@Override
 	public ZLImage readCover(ZLFile file) {
-		return null;
+		return myInfoReader.readCover(file);
 	}
 
 	@Override
 	public String readAnnotation(ZLFile file) {
-		return null;
+		return myInfoReader.readAnnotation(file);
 	}
 }

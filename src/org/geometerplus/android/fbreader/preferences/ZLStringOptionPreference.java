@@ -31,6 +31,7 @@ class ZLStringOptionPreference extends ZLStringPreference {
 		super(context, rootResource, resourceKey);
 		myOption = option;
 		super.setValue(myOption.getValue());
+		getEditText().setSingleLine();
 	}
 
 	@Override

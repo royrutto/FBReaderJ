@@ -46,6 +46,9 @@ import org.geometerplus.zlibrary.ui.android.R;
 import org.geometerplus.zlibrary.ui.android.application.ZLAndroidApplicationWindow;
 
 import org.geometerplus.fbreader.formats.*;
+import org.geometerplus.fbreader.Paths;
+
+import android.util.Log;
 
 public abstract class ZLAndroidActivity extends Activity {
 
@@ -80,10 +83,13 @@ public abstract class ZLAndroidActivity extends Activity {
 					String filepath = f.getPath();
 					int p1 = filepath.lastIndexOf(":");
 					String filename = filepath.substring(p1 + 1);
-					p1 = filename.lastIndexOf(".");
-					filename = filename.substring(0, p1);
-					File tmpfile = File.createTempFile(filename, "." + extension);
-					OutputStream out = new FileOutputStream(tmpfile);
+//					p1 = filename.lastIndexOf(".");
+//					filename = filename.substring(0, p1);
+//					File tmpfile = File.createTempFile(filename, "." + extension);
+					final File dirFile = new File(Paths.TempDirectoryOption().getValue());
+					dirFile.mkdirs();
+					String path = Paths.TempDirectoryOption().getValue() + "/" + filename;
+					OutputStream out = new FileOutputStream(Paths.TempDirectoryOption().getValue() + "/" + filename);
 
 					int read = 0;
 					byte[] bytes = new byte[1024];
@@ -94,7 +100,7 @@ public abstract class ZLAndroidActivity extends Activity {
 					}
 					out.flush();
 					out.close();
-					uri = Uri.fromFile(tmpfile);
+					uri = Uri.parse("file://" + path);
 				} catch (IOException e) {
 					showErrorDialog("unzipFailed");
 					return;

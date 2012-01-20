@@ -384,7 +384,7 @@ public abstract class NetworkLibraryActivity extends TreeActivity implements Net
 
 	@Override
 	protected void onCurrentTreeChanged() {
-		NetworkLibrary.Instance().fireModelChangedEvent(NetworkLibrary.ChangeListener.Code.SomeCode);
+//		NetworkLibrary.Instance().fireModelChangedEvent(NetworkLibrary.ChangeListener.Code.SomeCode);
 	}
 
 	private void showInitLibraryDialog(String error) {

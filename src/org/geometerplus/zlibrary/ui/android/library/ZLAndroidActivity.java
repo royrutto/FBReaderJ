@@ -292,6 +292,7 @@ public abstract class ZLAndroidActivity extends Activity {
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		ZLFile fileToOpen = fileFromIntent(intent);
+		if (fileToOpen == null) return;
 		if (fileToOpen.isArchive() && fileToOpen.getPath().endsWith(".fb2.zip")) {
 			final List<ZLFile> children = fileToOpen.children();
 			if (children.size() == 1) {

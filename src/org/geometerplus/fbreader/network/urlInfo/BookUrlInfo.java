@@ -24,6 +24,8 @@ import java.net.URI;
 
 import org.geometerplus.fbreader.Paths;
 
+import org.geometerplus.zlibrary.core.network.*;
+
 // resolvedReferenceType -- reference type without any ambiguity (for example, DOWNLOAD_FULL_OR_DEMO is ambiguous)
 
 public class BookUrlInfo extends UrlInfo {
@@ -94,20 +96,6 @@ public class BookUrlInfo extends UrlInfo {
 		}
 
 		String ext = format;
-//		switch (format) {
-//			case Format.EPUB:
-//				ext = ".epub";
-//				break;
-//			case Format.MOBIPOCKET:
-//				ext = ".mobi";
-//				break;
-//			case Format.FB2_ZIP:
-//				ext = ".fb2.zip";
-//				break;
-//			case Format.CUSTOM:
-//				ext = ".fb2.zip";
-//				break;
-//		}
 
 		if (ext == null) {
 			int j = path.indexOf(".", nameIndex); // using not lastIndexOf to preserve extensions like `.fb2.zip`
@@ -146,6 +134,8 @@ public class BookUrlInfo extends UrlInfo {
 				index = j + 1;
 			}
 		}
+
+//		String f = ZLNetworkManager.Instance().getFileNameOrUrl(url);
 		return path.append(ext).toString();
 	}
 

@@ -283,7 +283,6 @@ public class ZLNetworkManager {
 	}
 
 	private String getFileNameOrUrl(String Url, List<String> visited)/* throws ZLNetworkException*/ {//TODO: todo
-//Log.d("fbreader", "start checking " + Url);
 		DefaultHttpClient httpClient = null;
 		HttpEntity entity = null;
 		try {
@@ -326,9 +325,17 @@ public class ZLNetworkManager {
 			}
 			final int responseCode = response.getStatusLine().getStatusCode();
 
-			for (Header h : response.getAllHeaders()) {
-				Log.d("fbreader", h.getName());
-				Log.d("fbreader", h.getValue());
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				for (Header h : response.getAllHeaders()) {
+					if (h.getName().equalsIgnoreCase("Content-Disposition")) {
+						for (HeaderElement he : h.getElements()) {
+							if (he.getParameterByName("filename") != null) {
+								return he.getParameterByName("filename").getValue();
+							}
+						}
+					}
+				}
+				return "";
 			}
 		} catch (IOException e) {
 //			e.printStackTrace();
@@ -415,7 +422,7 @@ public class ZLNetworkManager {
 			final int responseCode = response.getStatusLine().getStatusCode();
 
 			InputStream stream = null;
-			if (entity != null && responseCode == HttpURLConnection.HTTP_OK) {
+			if (entity != null && (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_PARTIAL)) {
 				stream = entity.getContent();
 			}
 

@@ -34,8 +34,6 @@ import org.geometerplus.fbreader.network.urlInfo.*;
 
 import org.geometerplus.fbreader.formats.*;
 
-import android.util.Log;
-
 public class OPDSBookItem extends NetworkBookItem implements OPDSConstants {
 	public static OPDSBookItem create(INetworkLink link, String url) {
 		if (link == null || url == null) {
@@ -116,6 +114,7 @@ public class OPDSBookItem extends NetworkBookItem implements OPDSConstants {
 
 	private static UrlInfoCollection<UrlInfo> getUrls(OPDSNetworkLink networkLink, OPDSEntry entry, String baseUrl) {
 		final UrlInfoCollection<UrlInfo> urls = new UrlInfoCollection<UrlInfo>();
+		BookUrlInfo tempinfo = null;
 		for (ATOMLink link: entry.Links) {
 			final String href = ZLNetworkUtil.url(baseUrl, link.getHref());
 			final MimeType type = MimeType.get(link.getType());
@@ -157,13 +156,15 @@ public class OPDSBookItem extends NetworkBookItem implements OPDSConstants {
 				urls.addInfo(new UrlInfo(referenceType, href));
 			} else if (referenceType != null) {
 				final String format = formatByMimeType(type);
-Log.d("fbreader", type.Name);
 				if (format != BookUrlInfo.Format.NONE) {
-Log.d("fbreader", format);
-Log.d("fbreader", href);
-					urls.addInfo(new BookUrlInfo(referenceType, format, href));
+					if (tempinfo == null || BookUrlInfo.getPriority(tempinfo.BookFormat) < BookUrlInfo.getPriority(format)) {
+						tempinfo = new BookUrlInfo(referenceType, format, href);
+					}
 				}
 			}
+		}
+		if (tempinfo != null) {
+			urls.addInfo(tempinfo);
 		}
 		return urls;
 	}

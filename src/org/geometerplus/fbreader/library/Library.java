@@ -20,31 +20,14 @@
 package org.geometerplus.fbreader.library;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.*;
 
 import org.geometerplus.zlibrary.core.filesystem.*;
-import org.geometerplus.zlibrary.core.image.ZLImage;
-import org.geometerplus.zlibrary.core.resources.ZLResource;
 
 import org.geometerplus.fbreader.tree.FBTree;
-import org.geometerplus.fbreader.formats.FormatPlugin;
-import org.geometerplus.fbreader.formats.PluginCollection;
 import org.geometerplus.fbreader.Paths;
 
-public final class Library {
-	public interface ChangeListener {
-		public enum Code {
-			BookAdded,
-			BookRemoved,
-			StatusChanged,
-			Found,
-			NotFound
-		}
-
-		void onLibraryChanged(Code code);
-	}
-
+public final class Library extends AbstractLibrary {
 	public static final String ROOT_FOUND = "found";
 	public static final String ROOT_FAVORITES = "favorites";
 	public static final String ROOT_RECENT = "recent";
@@ -62,15 +45,9 @@ public final class Library {
 		return ourInstance;
 	}
 
-	public static ZLResource resource() {
-		return ZLResource.resource("library");
-	}
-
 	private final List<Book> myBooks = Collections.synchronizedList(new LinkedList<Book>());
-	private final RootTree myRootTree = new RootTree(this);
+	private final RootTree myRootTree = new RootTree();
 	private boolean myDoGroupTitlesByFirstLetter;
-
-	private final List<ChangeListener> myListeners = Collections.synchronizedList(new LinkedList<ChangeListener>());
 
 	private final static int STATUS_LOADING = 1;
 	private final static int STATUS_SEARCHING = 2;
@@ -96,14 +73,6 @@ public final class Library {
 
 	private FirstLevelTree getFirstLevelTree(String key) {
 		return (FirstLevelTree)myRootTree.getSubTree(key);
-	}
-
-	public void addChangeListener(ChangeListener listener) {
-		myListeners.add(listener);
-	}
-
-	public void removeChangeListener(ChangeListener listener) {
-		myListeners.remove(listener);
 	}
 
 	public LibraryTree getLibraryTree(LibraryTree.Key key) {
@@ -264,14 +233,6 @@ public final class Library {
 		}
 	}
 
-	private void fireModelChangedEvent(ChangeListener.Code code) {
-		synchronized (myListeners) {
-			for (ChangeListener l : myListeners) {
-				l.onLibraryChanged(code);
-			}
-		}
-	}
-
 	private void removeFromTree(String rootId, Book book) {
 		final FirstLevelTree tree = getFirstLevelTree(rootId);
 		if (tree != null) {
@@ -318,7 +279,19 @@ public final class Library {
 			savedBooksByBookId.put(b.getId(), b);
 		}
 
-		// Step 1: add "existing" books recent and favorites lists
+		// Step 1: set myDoGroupTitlesByFirstLetter value,
+        // add "existing" books into recent and favorites lists
+		if (savedBooksByFileId.size() > 10) {
+			final HashSet<String> letterSet = new HashSet<String>();
+			for (Book book : savedBooksByFileId.values()) {
+				final String letter = TitleTree.firstTitleLetter(book);
+				if (letter != null) {
+					letterSet.add(letter);
+				}
+			}
+			myDoGroupTitlesByFirstLetter = savedBooksByFileId.values().size() > letterSet.size() * 5 / 4;
+		}
+
 		for (long id : db.loadRecentBookIds()) {
 			Book book = savedBooksByBookId.get(id);
 			if (book == null) {
@@ -351,17 +324,6 @@ public final class Library {
 		//         add books to library if yes (and reload book info if needed);
 		//         remove from recent/favorites list if no;
 		//         collect newly "orphaned" books
-		if (savedBooksByFileId.size() > 10) {
-			final HashSet<String> letterSet = new HashSet<String>();
-			for (Book book : savedBooksByFileId.values()) {
-				final String letter = TitleTree.firstTitleLetter(book);
-				if (letter != null) {
-					letterSet.add(letter);
-				}
-			}
-			myDoGroupTitlesByFirstLetter = savedBooksByFileId.values().size() > letterSet.size() * 5 / 4;
-		}
-
 		final Set<Book> orphanedBooks = new HashSet<Book>();
 		int count = 0;
 		for (Book book : savedBooksByFileId.values()) {
@@ -458,6 +420,7 @@ public final class Library {
 		builder.start();
 	}
 
+	@Override
 	public boolean isUpToDate() {
 		return myStatusMask == 0;
 	}
@@ -492,6 +455,7 @@ public final class Library {
 		return null;
 	}
 
+	@Override
 	public void startBookSearch(final String pattern) {
 		setStatus(myStatusMask | STATUS_SEARCHING);
 		final Thread searcher = new Thread("Library.searchBooks") {
@@ -558,6 +522,7 @@ public final class Library {
 		db.saveRecentBookIds(ids);
 	}
 
+	@Override
 	public boolean isBookInFavorites(Book book) {
 		if (book == null) {
 			return false;
@@ -571,6 +536,7 @@ public final class Library {
 		return false;
 	}
 
+	@Override
 	public void addBookToFavorites(Book book) {
 		if (isBookInFavorites(book)) {
 			return;
@@ -580,6 +546,7 @@ public final class Library {
 		BooksDatabase.Instance().addToFavorites(book.getId());
 	}
 
+	@Override
 	public void removeBookFromFavorites(Book book) {
 		if (getFirstLevelTree(ROOT_FAVORITES).removeBook(book, false)) {
 			BooksDatabase.Instance().removeFromFavorites(book.getId());
@@ -587,16 +554,8 @@ public final class Library {
 		}
 	}
 
-	public static final int REMOVE_DONT_REMOVE = 0x00;
-	public static final int REMOVE_FROM_LIBRARY = 0x01;
-	public static final int REMOVE_FROM_DISK = 0x02;
-	public static final int REMOVE_FROM_LIBRARY_AND_DISK = REMOVE_FROM_LIBRARY | REMOVE_FROM_DISK;
-
-	public int getRemoveBookMode(Book book) {
-		return canDeleteBookFile(book) ? REMOVE_FROM_DISK : REMOVE_DONT_REMOVE;
-	}
-
-	private boolean canDeleteBookFile(Book book) {
+	@Override
+	public boolean canRemoveBookFile(Book book) {
 		ZLFile file = book.File;
 		if (file.getPhysicalFile() == null) {
 			return false;
@@ -610,6 +569,7 @@ public final class Library {
 		return true;
 	}
 
+	@Override
 	public void removeBook(Book book, int removeMode) {
 		if (removeMode == REMOVE_DONT_REMOVE) {
 			return;
@@ -628,43 +588,5 @@ public final class Library {
 		if ((removeMode & REMOVE_FROM_DISK) != 0) {
 			book.File.getPhysicalFile().delete();
 		}
-	}
-
-	private static final HashMap<String,WeakReference<ZLImage>> ourCoverMap =
-		new HashMap<String,WeakReference<ZLImage>>();
-	private static final WeakReference<ZLImage> NULL_IMAGE = new WeakReference<ZLImage>(null);
-
-	public static ZLImage getCover(ZLFile file) {
-		if (file == null) {
-			return null;
-		}
-		synchronized (ourCoverMap) {
-			final String path = file.getPath();
-			final WeakReference<ZLImage> ref = ourCoverMap.get(path);
-			if (ref == NULL_IMAGE) {
-				return null;
-			} else if (ref != null) {
-				final ZLImage image = ref.get();
-				if (image != null) {
-					return image;
-				}
-			}
-			ZLImage image = null;
-			final FormatPlugin plugin = PluginCollection.Instance().getPlugin(file);
-			if (plugin != null) {
-				image = plugin.readCover(file);
-			}
-			if (image == null) {
-				ourCoverMap.put(path, NULL_IMAGE);
-			} else {
-				ourCoverMap.put(path, new WeakReference<ZLImage>(image));
-			}
-			return image;
-		}
-	}
-
-	public static String getAnnotation(ZLFile file) {
-		final FormatPlugin plugin = PluginCollection.Instance().getPlugin(file);
-		return plugin != null ? plugin.readAnnotation(file) : null;
 	}
 }

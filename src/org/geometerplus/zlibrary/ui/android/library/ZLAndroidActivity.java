@@ -51,7 +51,6 @@ import org.geometerplus.fbreader.Paths;
 import android.util.Log;
 
 public abstract class ZLAndroidActivity extends Activity {
-
 	public static class FileOpener {
 		private final Activity myActivity;
 
@@ -132,7 +131,7 @@ public abstract class ZLAndroidActivity extends Activity {
 		}
 	}
 
-	protected abstract ZLApplication createApplication(ZLFile file);
+	protected abstract ZLApplication createApplication();
 
 	private static final String REQUESTED_ORIENTATION_KEY = "org.geometerplus.zlibrary.ui.android.library.androidActiviy.RequestedOrientation";
 	private static final String ORIENTATION_CHANGE_COUNTER_KEY = "org.geometerplus.zlibrary.ui.android.library.androidActiviy.ChangeCounter";
@@ -190,20 +189,26 @@ public abstract class ZLAndroidActivity extends Activity {
 
 		getLibrary().setActivity(this);
 
-		final ZLFile fileToOpen = fileFromIntent(getIntent());
 		final ZLAndroidApplication androidApplication = (ZLAndroidApplication)getApplication();
 		if (androidApplication.myMainWindow == null) {
-			final ZLApplication application = createApplication(fileToOpen);
+			final ZLApplication application = createApplication();
 			androidApplication.myMainWindow = new ZLAndroidApplicationWindow(application);
 			application.initWindow();
 		} else {
+			final ZLFile fileToOpen = fileFromIntent(getIntent());
 			if (fileToOpen != null) {
 				FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
 				if (plugin.isNative()) {
-					ZLApplication.Instance().openFile(fileToOpen);
+					new Thread() {
+						public void run() {
+							ZLApplication.Instance().openFile(fileToOpen);
+							ZLApplication.Instance().getViewWidget().repaint();
+						}
+					}.start();
 				}
 			}
 		}
+
 		ZLApplication.Instance().getViewWidget().repaint();
 	}
 

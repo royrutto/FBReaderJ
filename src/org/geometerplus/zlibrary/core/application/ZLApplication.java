@@ -65,7 +65,7 @@ public abstract class ZLApplication {
 		myWindow = window;
 	}
 
-	public void initWindow() {
+	public final void initWindow() {
 		setView(myView);
 	}
 
@@ -75,9 +75,9 @@ public abstract class ZLApplication {
 		}
 	}
 
-	protected void wait(String key, Runnable runnable) {
+	protected void runWithMessage(String key, Runnable runnable) {
 		if (myWindow != null) {
-			myWindow.wait(key, runnable);
+			myWindow.runWithMessage(key, runnable);
 		}
 	}
 
@@ -87,7 +87,7 @@ public abstract class ZLApplication {
 
 	public final void onRepaintFinished() {
 		if (myWindow != null) {
-			myWindow.refreshMenu();
+			myWindow.refresh();
 		}
 		for (PopupPanel popup : popupPanels()) {
 			popup.update();

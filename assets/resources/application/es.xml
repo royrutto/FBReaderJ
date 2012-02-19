@@ -365,13 +365,13 @@
 					<node name="boldItalic" value="Negrita cursiva"/>
 				</node>
 				<node name="bold" value="Negrita">
-					<node name="on" value="negrita"/>
-					<node name="off" value="normal"/>
+					<node name="summaryOn" value="negrita"/>
+					<node name="summaryOff" value="normal"/>
 					<node name="unchanged" value="&lt;sin cambios&gt;"/>
 				</node>
 				<node name="italic" value="Cursiva">
-					<node name="on" value="cursiva"/>
-					<node name="off" value="normal"/>
+					<node name="summaryOn" value="cursiva"/>
+					<node name="summaryOff" value="normal"/>
 					<node name="unchanged" value="&lt;sin cambios&gt;"/>
 				</node>
 				<node name="lineSpacing" value="Interlineado">
@@ -389,8 +389,8 @@
 					<node name="summaryOff" value="No dividirpalabras automáticamente"/>
 				</node>
 				<node name="allowHyphenations" value="Permitir división de palabras">
-					<node name="on" value="dividir palabras"/>
-					<node name="off" value="no dividir palabras"/>
+					<node name="summaryOn" value="dividir palabras"/>
+					<node name="summaryOff" value="no dividir palabras"/>
 					<node name="unchanged" value="&lt;sin cambios&gt;"/>
 				</node>
 				<node name="firstLineIndent" value="Sangrar la primera linea"/>
@@ -648,6 +648,19 @@
 				<node name="showTips" value="Show tips" toBeTranslated="true">
 					<node name="summaryOn" value="Show daily tips" toBeTranslated="true"/>
 					<node name="summaryOff" value="Do not show" toBeTranslated="true"/>
+				</node>
+			</node>
+			<node name="about" value="About FBReader" toBeTranslated="true">
+				<node name="summary" value="Version info, contacts" toBeTranslated="true"/>
+				<node name="version" value="Version" toBeTranslated="true"/>
+				<node name="site" value="Visit our website" toBeTranslated="true">
+					<node name="url" value="http://www.fbreader.org/"/>
+				</node>
+				<node name="email" value="Send us an e-mail" toBeTranslated="true">
+					<node name="url" value="mailto:contact@geometerplus.com" toBeTranslated="true"/>
+				</node>
+				<node name="twitter" value="Follow us at twitter" toBeTranslated="true">
+					<node name="url" value="http://twitter.com/fbreader"/>
 				</node>
 			</node>
 		</node>

@@ -95,7 +95,25 @@ public class BookUrlInfo extends UrlInfo {
 			++index;
 		}
 
+<<<<<<< HEAD
 		String ext = format;
+=======
+		String ext = null;
+		switch (format) {
+			case Format.EPUB:
+				ext = ".epub";
+				break;
+			case Format.MOBIPOCKET:
+				ext = ".mobi";
+				break;
+			case Format.FB2:
+				ext = ".fb2";
+				break;
+			case Format.FB2_ZIP:
+				ext = ".fb2.zip";
+				break;
+		}
+>>>>>>> master
 
 		if (ext == null) {
 			int j = path.indexOf(".", nameIndex); // using not lastIndexOf to preserve extensions like `.fb2.zip`

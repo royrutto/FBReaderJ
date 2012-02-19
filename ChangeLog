@@ -1,9 +1,29 @@
-===== 1.3.4 (??? ??, 2012) =====
+===== 1.3.8 (Feb ??, 2012) =====
+* striked through/underlined text support
+* asynchronous bonjour scanning: user can select any found network even if scanning is still in progress
+* better support for "related" catalogs in book descriptions
+
+===== 1.3.7 (Feb 9, 2012) =====
+* Font smoothing settings (Settings -> Text -> Font properties)
+* Fixed 'question symbols in menu' issue
+* Android 3.*/4.0: Action bar is shown by default (Settings -> Appearance -> Show action bar)
+
+===== 1.3.6 (Feb 6, 2012) =====
+* Updated Ukrainian translation (by Nazariy Makarenko)
+* LEO dictionary integration
+* No conflicts between book images and covers
+* No black screen for a long time at start: synchronization issue has been fixed
+* OPDS optimization
+
+===== 1.3.5 (Feb 2, 2012) =====
 * About section in the preferences dialog
 * Better SlovoEd dictionary integration (780 dictionaries are supported)
 * CHANGE_WIFI_STATE permission is not required more
 * getBookFileName() API method has been implemented
 * Application start speed-up
+* Network library: don't repaint all the views on image downloading
+* Network library: select previous opened tree on back key pressing
+* Network library: on-demand (on-scroll) catalog parts loading
 
 ===== 1.3.3 (Jan 18, 2012) =====
 * Proguard -dontoptimize option, looks like these optimizations are buggy :(

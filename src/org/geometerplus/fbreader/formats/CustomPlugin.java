@@ -61,8 +61,8 @@ public class CustomPlugin extends FormatPlugin {
 	}
 
 	@Override
-	public boolean isNative() {
-		return false;
+	public Type type() {
+		return Type.EXTERNAL;
 	}
 
 	@Override

@@ -32,7 +32,10 @@ public abstract class FormatPlugin implements InfoReader {
 	public abstract ZLImage readCover(ZLFile file);
 	public abstract String readAnnotation(ZLFile file);
 
-	public boolean isNative() {
-		return true;
-	}
+	public enum Type {
+		JAVA,
+		NATIVE,
+		EXTERNAL
+	};
+	public abstract Type type();
 }

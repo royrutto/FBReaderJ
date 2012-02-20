@@ -197,8 +197,8 @@ public abstract class ZLAndroidActivity extends Activity {
 		} else {
 			final ZLFile fileToOpen = fileFromIntent(getIntent());
 			if (fileToOpen != null) {
-				FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
-				if (plugin.isNative()) {
+				final FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
+				if (plugin.type() != FormatPlugin.Type.EXTERNAL) {
 					new Thread() {
 						public void run() {
 							ZLApplication.Instance().openFile(fileToOpen);
@@ -307,11 +307,11 @@ public abstract class ZLAndroidActivity extends Activity {
 				}
 			} 
 		}
-		FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
-		if (plugin.isNative()) {
+		final FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
+		if (plugin.type() != FormatPlugin.Type.EXTERNAL) {
 			ZLApplication.Instance().openFile(fileToOpen);
 		} else {
-			CustomPlugin p = (CustomPlugin)plugin;
+			final CustomPlugin p = (CustomPlugin)plugin;
 			processFile(fileToOpen);
 			myFileOpener.openFile(p.getExtension(), fileToOpen, p.getPackage());
 		}

@@ -25,6 +25,7 @@ import java.util.*;
 import org.geometerplus.zlibrary.core.filesystem.*;
 
 import org.geometerplus.fbreader.tree.FBTree;
+import org.geometerplus.fbreader.formats.FormatPlugin;
 import org.geometerplus.fbreader.formats.PluginCollection;
 import org.geometerplus.fbreader.Paths;
 
@@ -433,7 +434,7 @@ public final class Library extends AbstractLibrary {
 		List<Long> recentIds = BooksDatabase.Instance().loadRecentBookIds();
 		for (Long id : recentIds) {
 			try {
-				if (PluginCollection.Instance().getPlugin(Book.getById(id).File).isNative()) {
+				if (PluginCollection.Instance().getPlugin(Book.getById(id).File).type() != FormatPlugin.Type.EXTERNAL) {
 					return Book.getById(id);
 				}
 			} catch (NullPointerException e) {
@@ -449,7 +450,7 @@ public final class Library extends AbstractLibrary {
 		for (Long id : recentIds) {
 			if (firstSkipped) {
 				try {
-					if (PluginCollection.Instance().getPlugin(Book.getById(id).File).isNative()) {
+					if (PluginCollection.Instance().getPlugin(Book.getById(id).File).type() != FormatPlugin.Type.EXTERNAL) {
 						return Book.getById(id);
 					}
 				} catch (NullPointerException e) {

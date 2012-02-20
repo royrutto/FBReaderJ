@@ -22,11 +22,9 @@ package org.geometerplus.fbreader.formats.oeb;
 import org.geometerplus.zlibrary.core.filesystem.*;
 
 public class OEBPlugin extends CommonOEBPlugin {
-
 	@Override
 	public boolean acceptsFile(ZLFile file) {
 		final String extension = file.getExtension();
 		return "oeb".equals(extension);
 	}
-
 }

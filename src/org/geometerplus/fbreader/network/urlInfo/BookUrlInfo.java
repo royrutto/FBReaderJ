@@ -34,6 +34,7 @@ public class BookUrlInfo extends UrlInfo {
 	public interface Format {
 		String NONE = null;
 		String MOBIPOCKET = ".mobi";
+		String FB2 = ".fb2";
 		String FB2_ZIP = ".fb2.zip";
 		String EPUB = ".epub";
 	}
@@ -95,25 +96,7 @@ public class BookUrlInfo extends UrlInfo {
 			++index;
 		}
 
-<<<<<<< HEAD
 		String ext = format;
-=======
-		String ext = null;
-		switch (format) {
-			case Format.EPUB:
-				ext = ".epub";
-				break;
-			case Format.MOBIPOCKET:
-				ext = ".mobi";
-				break;
-			case Format.FB2:
-				ext = ".fb2";
-				break;
-			case Format.FB2_ZIP:
-				ext = ".fb2.zip";
-				break;
-		}
->>>>>>> master
 
 		if (ext == null) {
 			int j = path.indexOf(".", nameIndex); // using not lastIndexOf to preserve extensions like `.fb2.zip`

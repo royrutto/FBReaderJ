@@ -21,11 +21,11 @@ package org.geometerplus.fbreader.formats.fb2;
 
 import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.library.Book;
-import org.geometerplus.fbreader.formats.FormatPlugin;
+import org.geometerplus.fbreader.formats.JavaFormatPlugin;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.image.ZLImage;
 
-public class FB2Plugin extends FormatPlugin {
+public class FB2Plugin extends JavaFormatPlugin {
 	@Override
 	public boolean acceptsFile(ZLFile file) {
 		return "fb2".equals(file.getExtension());

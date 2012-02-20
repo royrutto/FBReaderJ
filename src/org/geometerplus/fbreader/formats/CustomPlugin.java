@@ -76,6 +76,11 @@ public class CustomPlugin extends FormatPlugin {
 	}
 
 	@Override
+	public boolean readLanguageAndEncoding(Book book) {
+		return true;
+	}
+
+	@Override
 	public boolean readModel(BookModel model) {
 		return false;
 	}

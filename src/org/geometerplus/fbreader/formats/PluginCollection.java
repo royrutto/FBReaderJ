@@ -46,14 +46,12 @@ public class PluginCollection {
 
 	public static PluginCollection Instance() {
 		if (ourInstance == null) {
-
 			ourInstance = new PluginCollection();
 			ourInstance.myNativePlugins.put("fb2", new FB2Plugin());
 			ourInstance.myNativePlugins.put("mobi", new MobipocketPlugin());
 			ourInstance.myNativePlugins.put("oeb", new OEBPlugin());
 			ourInstance.myNativePlugins.put("epub", new EpubPlugin());
 			ourInstance.myNativePlugins.put("opf", new OPFPlugin());
-
 		}
 		return ourInstance;
 	}

@@ -75,7 +75,13 @@ public class PluginCollection {
 		list.add(plugin);
 	}
 
-	private FormatPlugin getOrCreateCustomPlugin(String extension) {
+	private FormatPlugin getOrCreateCustomPlugin(String fileTypeId) {
+		List<FormatPlugin> list = myPlugins.get(FormatPlugin.Type.EXTERNAL);
+		if (list == null) {
+			list = new ArrayList<FormatPlugin>();
+			myPlugins.put(FormatPlugin.Type.EXTERNAL, list);
+		}
+		
 		if (!myExternalPlugins.containsKey(extension)) {
 			if (myNativePlugins.containsKey(extension)) {
 				myExternalPlugins.put(extension, new CustomPlugin(extension, myNativePlugins.get(extension)));

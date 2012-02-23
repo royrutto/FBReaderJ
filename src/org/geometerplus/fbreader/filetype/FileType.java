@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2012 Geometer Plus <contact@geometerplus.com>
+ * Copyright (C) 2012 Geometer Plus <contact@geometerplus.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,20 @@
  * 02110-1301, USA.
  */
 
-package org.geometerplus.fbreader.formats.oeb;
+package org.geometerplus.fbreader.filetype;
 
-import org.geometerplus.zlibrary.core.filesystem.*;
+import org.geometerplus.zlibrary.core.filesystem.ZLFile;
+import org.geometerplus.zlibrary.core.util.MimeType;
 
-public class OEBPlugin extends CommonOEBPlugin {
-	@Override
-	public boolean acceptsFile(ZLFile file) {
-		final String extension = file.getExtension();
-		return "oebzip".equals(extension);
+public abstract class FileType {
+	public final String Id;
+
+	protected FileType(String id) {
+		Id = id;
 	}
+
+	public abstract boolean acceptsFile(ZLFile file);
+
+	public abstract String extension();
+	public abstract MimeType mimeType();
 }

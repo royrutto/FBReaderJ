@@ -26,8 +26,6 @@ import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 
 import org.geometerplus.fbreader.formats.fb2.FB2Plugin;
 import org.geometerplus.fbreader.formats.oeb.OEBPlugin;
-import org.geometerplus.fbreader.formats.oeb.OPFPlugin;
-import org.geometerplus.fbreader.formats.oeb.EpubPlugin;
 import org.geometerplus.fbreader.formats.pdb.MobipocketPlugin;
 
 import android.util.Log;
@@ -49,9 +47,7 @@ public class PluginCollection {
 			ourInstance = new PluginCollection();
 			ourInstance.myNativePlugins.put("fb2", new FB2Plugin());
 			ourInstance.myNativePlugins.put("mobi", new MobipocketPlugin());
-			ourInstance.myNativePlugins.put("oeb", new OEBPlugin());
-			ourInstance.myNativePlugins.put("epub", new EpubPlugin());
-			ourInstance.myNativePlugins.put("opf", new OPFPlugin());
+			ourInstance.myNativePlugins.put("epub", new OEBPlugin());
 		}
 		return ourInstance;
 	}

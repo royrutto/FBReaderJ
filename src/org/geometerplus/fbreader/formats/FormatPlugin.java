@@ -32,6 +32,7 @@ public abstract class FormatPlugin implements InfoReader {
 		return fileType != null && fileType.acceptsFile(file);
 	}
 
+	public abstract String supportedFileType();
 	public abstract boolean readMetaInfo(Book book);
 	public abstract boolean readLanguageAndEncoding(Book book);
 	public abstract boolean readModel(BookModel model);

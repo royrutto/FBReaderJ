@@ -66,8 +66,8 @@ public class CustomPlugin extends FormatPlugin {
 	}
 
 	@Override
-	public boolean acceptsFile(ZLFile file) {
-		return myFormat.equals(file.getExtension());
+	public String supportedFileType() {
+		return myFormat;
 	}
 
 	@Override

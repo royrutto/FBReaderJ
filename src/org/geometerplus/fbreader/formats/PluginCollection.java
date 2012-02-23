@@ -32,6 +32,10 @@ import org.geometerplus.fbreader.filetype.*;
 import android.util.Log;
 
 public class PluginCollection {
+	static {
+		System.loadLibrary("NativeFormats-v1");
+	}
+
 	private static PluginCollection ourInstance;
 
 	private final Map<FormatPlugin.Type,List<FormatPlugin>> myPlugins =

@@ -105,7 +105,7 @@ public class PluginCollection {
 
 	public boolean acceptsBookPath(String path) {
 		String extension = path.substring(path.lastIndexOf('.') + 1);
-		return Formats.getStatus(extension) != Formats.UNDEFINED;
+		return Formats.getStatus(extension) != FormatPlugin.Type.NONE;
 	}
 
 	public String ExtForMimeType(String type) {

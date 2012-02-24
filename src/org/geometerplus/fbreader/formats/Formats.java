@@ -24,11 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public abstract class Formats {
-
-	public static final int NATIVE = 0;
-	public static final int EXTERNAL = 1;
-	public static final int UNDEFINED = 2;
-
 	private static String NATIVE_FORMATS = "epub;fb2;mobi;oeb";
 
 	public static String extensionToOption(String extension) {
@@ -116,13 +111,11 @@ public abstract class Formats {
 		}
 	}
 
-	public static int getStatus(String extension) {
+	public static FormatPlugin.Type getStatus(String extension) {
 		extension = extension.toLowerCase();
 		String pkg = extensionOption(extension).getValue();
-		if (pkg.equals("org.geometerplus.zlibrary.ui.android")) return NATIVE;
-		if (pkg.equals("")) return UNDEFINED;
-		return EXTERNAL;
+		if (pkg.equals("org.geometerplus.zlibrary.ui.android")) return FormatPlugin.Type.JAVA;
+		if (pkg.equals("")) return FormatPlugin.Type.NONE;
+		return FormatPlugin.Type.EXTERNAL;
 	}
-
-
 }

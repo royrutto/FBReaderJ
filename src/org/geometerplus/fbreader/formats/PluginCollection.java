@@ -85,20 +85,22 @@ public class PluginCollection {
 	}
 
 	private FormatPlugin getOrCreateCustomPlugin(String fileTypeId) {
-		List<FormatPlugin> list = myPlugins.get(FormatPlugin.Type.EXTERNAL);
-		if (list == null) {
-			list = new ArrayList<FormatPlugin>();
-			myPlugins.put(FormatPlugin.Type.EXTERNAL, list);
-		}
+		final FileType fileType = FileTypeCollection.Instance.typeById(fileTypeId);
+		FormatPlugin plugin = getPlugin(fileType, FormatPlugin.Type.EXTERNAL);
 		
-		if (!myExternalPlugins.containsKey(extension)) {
-			if (myNativePlugins.containsKey(extension)) {
-				myExternalPlugins.put(extension, new CustomPlugin(extension, myNativePlugins.get(extension)));
-			} else {
-				myExternalPlugins.put(extension, new CustomPlugin(extension));
+		if (plugin == null) {
+			FormatPlugin builtInPlugin = getPlugin(fileType, FormatPlugin.Type.JAVA);
+			if (builtInPlugin == null) {
+				builtInPlugin = getPlugin(fileType, FormatPlugin.Type.NATIVE);
 			}
+			if (builtInPlugin != null) {
+				plugin = new CustomPlugin(fileTypeId, builtInPlugin);
+			} else {
+				plugin = new CustomPlugin(fileTypeId);
+			}
+			addPlugin(plugin);
 		}
-		return myExternalPlugins.get(extension);
+		return plugin;
 	}
 
 	public boolean acceptsBookPath(String path) {

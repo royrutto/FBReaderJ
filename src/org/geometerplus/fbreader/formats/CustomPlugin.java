@@ -26,7 +26,6 @@ import org.geometerplus.zlibrary.core.image.ZLImage;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
 public class CustomPlugin extends FormatPlugin {
-
 	private static class DefaultInfoReader implements InfoReader {
 		public boolean readMetaInfo(Book book) {
 			return true;
@@ -40,34 +39,24 @@ public class CustomPlugin extends FormatPlugin {
 	}
 
 	private InfoReader myInfoReader;
-	private String myFormat;
 
-	CustomPlugin(String extension) {
-		myFormat = extension;
+	CustomPlugin(String fileType) {
+		super(fileType);
 		myInfoReader = new DefaultInfoReader();
 	}
 
-	CustomPlugin(String extension, InfoReader ir) {
-		myFormat = extension;
+	CustomPlugin(String fileType, InfoReader ir) {
+		super(fileType);
 		myInfoReader = ir;
 	}
 
-	public String getExtension() {
-		return myFormat;
-	}
-
 	public String getPackage() {
-		return Formats.extensionOption(myFormat).getValue();
+		return Formats.extensionOption(supportedFileType()).getValue();
 	}
 
 	@Override
 	public Type type() {
 		return Type.EXTERNAL;
-	}
-
-	@Override
-	public String supportedFileType() {
-		return myFormat;
 	}
 
 	@Override

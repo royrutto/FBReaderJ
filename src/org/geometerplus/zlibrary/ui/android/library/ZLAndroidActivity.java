@@ -313,7 +313,7 @@ public abstract class ZLAndroidActivity extends Activity {
 		} else {
 			final CustomPlugin p = (CustomPlugin)plugin;
 			processFile(fileToOpen);
-			myFileOpener.openFile(p.getExtension(), fileToOpen, p.getPackage());
+			myFileOpener.openFile(p.supportedFileType(), fileToOpen, p.getPackage());
 		}
 	}
 

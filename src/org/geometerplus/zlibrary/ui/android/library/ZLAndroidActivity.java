@@ -201,7 +201,7 @@ public abstract class ZLAndroidActivity extends Activity {
 				if (plugin.type() != FormatPlugin.Type.EXTERNAL) {
 					new Thread() {
 						public void run() {
-							ZLApplication.Instance().openFile(fileToOpen);
+							ZLApplication.Instance().openFile(fileToOpen, getPostponedInitAction());
 							ZLApplication.Instance().getViewWidget().repaint();
 						}
 					}.start();
@@ -211,6 +211,8 @@ public abstract class ZLAndroidActivity extends Activity {
 
 		ZLApplication.Instance().getViewWidget().repaint();
 	}
+
+	protected abstract Runnable getPostponedInitAction();
 
 	private PowerManager.WakeLock myWakeLock;
 	private boolean myWakeLockToCreate;
@@ -309,7 +311,7 @@ public abstract class ZLAndroidActivity extends Activity {
 		}
 		final FormatPlugin plugin = PluginCollection.Instance().getPlugin(fileToOpen);
 		if (plugin.type() != FormatPlugin.Type.EXTERNAL) {
-			ZLApplication.Instance().openFile(fileToOpen);
+			ZLApplication.Instance().openFile(fileToOpen, null);
 		} else {
 			final CustomPlugin p = (CustomPlugin)plugin;
 			processFile(fileToOpen);
